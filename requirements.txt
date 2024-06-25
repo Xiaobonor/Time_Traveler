@@ -1,0 +1,11 @@
+Flask==3.0.3
+flask_socketio==5.3.6
+flask_session==0.8.0
+flask_cors==4.0.1
+
+setuptools==70.1.0
+async_openai==0.0.52
+python-dotenv==1.0.1
+mongoengine==0.28.2
+Authlib==1.3.1
+redis==5.0.6
