@@ -11,16 +11,17 @@ from flask_socketio import SocketIO
 from dotenv import load_dotenv
 from mongoengine import connect
 from authlib.integrations.flask_client import OAuth
-from async_openai import OpenAIClient
+from async_openai import OpenAI
 from redis import Redis
 
 socketio = SocketIO()
 cors = CORS()
 oauth = OAuth()
-openai = OpenAIClient()
+openai = None
 
 
 def create_app():
+    global openai
     load_dotenv()
 
     app = Flask(__name__)
@@ -39,11 +40,24 @@ def create_app():
     app.config['SESSION_USE_SIGNER'] = True
     app.config['SESSION_KEY_PREFIX'] = 'sess:'
 
+    # OPENAI configuration
+    if os.getenv('USE_AZURE_OPENAI') == 'True':
+        OpenAI.configure(
+            azure_api_base=os.getenv('AZURE_OPENAI_ENDPOINT'),
+            azure_api_key=os.getenv('AZURE_OPENAI_API_KEY'),
+            api_version=os.getenv('AZURE_OPENAI_API_VERSION')
+        )
+        openai = OpenAI.init_api_client('az', set_as_default=True, debug_enabled=True)
+    else:
+        OpenAI.configure(
+            api_key=os.getenv('OPENAI_API_KEY'),
+        )
+        openai = OpenAI.init_api_client()
+
     # Here to load blueprint
     from app.routes.auth import auth_bp
 
     connect(host=os.getenv('MONGO_URI'))
-    openai.api_key = os.getenv('OPENAI_API_KEY') if os.getenv('OPENAI_API_KEY') else None
     Session(app)
     socketio.init_app(app)
     oauth.init_app(app)
