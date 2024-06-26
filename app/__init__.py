@@ -56,6 +56,7 @@ def create_app():
 
     # Here to load blueprint
     from app.routes.auth import auth_bp
+    from app.routes.index import index_bp
 
     connect(host=os.getenv('MONGO_URI'))
     Session(app)
@@ -65,5 +66,6 @@ def create_app():
 
     # Here to register blueprint
     app.register_blueprint(auth_bp)
+    app.register_blueprint(index_bp)
 
     return app
