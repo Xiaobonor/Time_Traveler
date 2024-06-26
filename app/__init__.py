@@ -40,6 +40,7 @@ def create_app():
     app.config['SESSION_KEY_PREFIX'] = 'sess:'
 
     # Here to load blueprint
+    from app.routes.auth import auth_bp
 
     connect(host=os.getenv('MONGO_URI'))
     openai.api_key = os.getenv('OPENAI_API_KEY') if os.getenv('OPENAI_API_KEY') else None
@@ -49,5 +50,6 @@ def create_app():
     cors.init_app(app)
 
     # Here to register blueprint
+    app.register_blueprint(auth_bp)
 
     return app
