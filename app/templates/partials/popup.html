@@ -1,0 +1,15 @@
+<!-- app/templates/partials/popup.html -->
+<link rel="stylesheet" href="{{ url_for('static', filename='partials/popup/style.css') }}">
+
+<div class="overlay" id="popupOverlay">
+    <div class="popup">
+        <ion-icon name="alert-circle" id="popupIcon" class="popup-icon"></ion-icon>
+        <div class="popup-title" id="popupTitle">標題</div>
+        <div class="popup-text" id="popupMessage">消息內容</div>
+        <button class="popup-button-popup" id="closePopupBtn">關閉</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='partials/popup/script.js') }}"></script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

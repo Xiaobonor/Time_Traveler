@@ -1,7 +1,8 @@
+// app/static/partials/mapbox/script.js
 mapboxgl.accessToken = '';
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/dark-v10',
+    style: 'mapbox://styles/xiaobocute/clxykmzy0003e01r442wq6r0o',
     center: [120.9605, 23.6978],
     zoom: 7
 });
