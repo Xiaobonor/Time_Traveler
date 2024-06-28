@@ -1,10 +1,66 @@
 <!-- app/templates/index.html -->
 <!DOCTYPE html>
 <html lang="zh-TW">
-<meta charset="utf-8">
-<title>時光旅人</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<head>
+    <title>首頁 | 時光旅人</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Noto+Serif+JP:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index/style.css')}}">
+</head>
 <body>
-    {% include 'partials/mapbox.html' %}
+    <div id="overlay"></div>
+
+    {% include 'partials/popup.html' %}
+
+    <nav id="navigation">
+        <div class="nav-brand">
+            <i id="menu-toggle" class="fas fa-bars"></i>
+            <span>時光旅人</span>
+        </div>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-home"></i> <span>首頁</span></a>
+            <a href="/document"><i class="fas fa-book"></i> <span>使用文檔</span></a>
+            <a href="/price"><i class="fas fa-dollar-sign"></i> <span>定價</span></a>
+            <a href="{{ auth }}"><i class="fas fa-user"></i> <span>{{ user_name }}</span></a>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div id="page" class="center">
+            <h1 class="fade-in">時光旅人</h1>
+            <p class="fade-in delay">讓旅行回歸純粹的享受</p>
+
+            <div class="search-container fade-in delay">
+                <input type="text" id="search-input" placeholder="想去哪？">
+                <button class="search-button"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <section id="features" class="fade-in delay">
+        <div class="feature-box">
+            <i class="fas fa-map-signs fa-3x"></i>
+            <h2>旅行助理</h2>
+            <p>提供個性化旅行規劃，讓您輕鬆應對突發狀況。</p>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-hand-holding-heart fa-3x"></i>
+            <h2>旅行夥伴</h2>
+            <p>即時資訊與推薦，讓您的旅程更加豐富多彩。</p>
+        </div>
+        <div class="feature-box">
+            <i class="fas fa-camera-retro fa-3x"></i>
+            <h2>旅行回憶</h2>
+            <p>自動生成旅行日記，珍藏每一次旅行的美好回憶。</p>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='index/script.js')}}"></script>
+<script>
+    const success = {{ success | default({}, true) | tojson | safe }};
+    const error = {{ error | default({}, true) | tojson | safe }};
+</script>
 </body>
 </html>

@@ -1,0 +1,342 @@
+/* app/static/index/style.css */
+body {
+    font-family: 'Noto Serif JP', serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-image: url('/static/images/index_background.webp');
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.center {
+    text-align: center;
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    position: relative;
+    top: -20px;
+}
+
+.fade-in.delay {
+    animation-delay: 1s;
+}
+
+h1 {
+    color: #2c3e50;
+    font-size: 4em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    line-height: 1.2;
+}
+
+p {
+    font-size: 2em;
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+    margin-top: 20px;
+}
+
+section {
+    padding: 50px;
+    text-align: center;
+}
+
+.main-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+@media screen and (min-width: 768px) {
+    table {
+        max-width: 80%;
+        overflow-x: auto;
+        margin: 0 auto;
+    }
+}
+
+nav {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3a3f58;
+    transition: transform 0.5s, opacity 0.5s, background-color 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    transform: translateY(-100%);
+    z-index: 100;
+    border-radius: 0 0 5px 5px;
+}
+
+nav.scrolled {
+    background-color: #2b2e3d;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+nav.hidden {
+    opacity: 0;
+    transform: translateY(-100%);
+}
+
+.nav-brand span {
+    margin-left: 10%;
+    font-weight: 700;
+    font-size: 1.4em;
+    text-wrap: nowrap;
+    color: white;
+    transition: color 0.3s;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s, transform 0.2s, color 0.3s;
+    font-weight: 500;
+}
+
+.nav-links a i {
+    margin-right: 8px;
+}
+
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+#menu-toggle {
+    display: none;
+    cursor: pointer;
+    color: white;
+}
+
+@media screen and (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+    }
+
+    .nav-links a {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    #menu-toggle {
+        display: inline-block;
+        font-size: 1.5em;
+        margin-right: 10%;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    nav.menu-opened .nav-links {
+        display: flex;
+    }
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#search-input {
+    width: 300px;
+    padding: 10px;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    font-size: 1.2em;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: width 0.4s ease-in-out;
+}
+
+#search-input:focus {
+    width: 400px;
+    outline: none;
+}
+
+.search-button {
+    padding: 10px;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    background: linear-gradient(to right, #34495e, #2c3e50);
+    color: white;
+    cursor: pointer;
+    font-size: 1.2em;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.search-button:hover {
+    background-color: #34495e;
+    transform: translateY(-2px);
+}
+
+.search-button:active {
+    transform: translateY(0px);
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: #25252b;
+    z-index: 9999;
+    transition: right 0.5s;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; top: -20px; }
+    100% { opacity: 1; top: 0px; }
+}
+
+/* Introduction */
+#features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 50px;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+    background-color: #f7f7f7;
+    text-align: center;
+}
+
+.feature-box {
+    flex: 1;
+    max-width: 300px;
+    margin: 20px;
+    padding: 20px;
+    background: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.feature-box i {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.feature-box h2 {
+    font-size: 1.5em;
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.feature-box p {
+    font-size: 1em;
+    color: #666;
+    line-height: 1.6;
+}
+
+.feature-box:hover {
+    transform: translateY(-10px);
+}
+
+@media screen and (max-width: 600px) {
+    h1 {
+        font-size: 2.5em;
+    }
+
+    p {
+        font-size: 1.5em;
+    }
+
+    .search-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #search-input {
+        width: 80%;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+
+    .search-button {
+        width: 80%;
+        border-radius: 4px;
+    }
+
+    .feature-box {
+        margin: 10px;
+        padding: 10px;
+        max-width: 90%;
+    }
+
+    nav {
+        height: auto;
+    }
+
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        margin-left: 5%;
+    }
+
+    .nav-brand span {
+        font-size: 1.2em;
+        margin-left: 4px;
+    }
+
+    .nav-links a {
+        font-size: 1em;
+        padding: 10px 5px;
+    }
+
+    .nav-links {
+        width: 100%;
+    }
+
+    #menu-toggle {
+        display: inline-block;
+        font-size: 1.5em;
+    }
+
+    .main-wrapper {
+        height: auto;
+        padding: 20px;
+    }
+
+    section {
+        padding: 20px;
+    }
+
+    #features {
+        flex-direction: column;
+        padding: 20px;
+    }
+}
