@@ -24,6 +24,7 @@ def create_app():
     global openai
     load_dotenv()
 
+    # App configuration
     app = Flask(__name__)
     app.config['DEBUG'] = os.getenv('DEBUG') == 'True'
 
@@ -40,7 +41,7 @@ def create_app():
     app.config['SESSION_USE_SIGNER'] = True
     app.config['SESSION_KEY_PREFIX'] = 'sess:'
 
-    # OPENAI configuration
+    # OPENAI configuration and initialization
     if os.getenv('USE_AZURE_OPENAI') == 'True':
         OpenAI.configure(
             azure_api_base=os.getenv('AZURE_OPENAI_ENDPOINT'),
@@ -58,6 +59,7 @@ def create_app():
     from app.routes.auth import auth_bp
     from app.routes.index import index_bp
 
+    # Here to initialize the app
     connect(host=os.getenv('MONGO_URI'))
     Session(app)
     socketio.init_app(app)

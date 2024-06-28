@@ -1,7 +1,7 @@
 # app/models/user.py
 from datetime import datetime
-
-from mongoengine import Document, StringField, URLField, EmailField, DateTimeField
+from mongoengine import Document, StringField, URLField, EmailField, DateTimeField, ListField, ReferenceField
+from app.models.journeys import Journeys
 
 
 class User(Document):
@@ -11,6 +11,8 @@ class User(Document):
     avatar_url = URLField(required=True)
 
     created_at = DateTimeField(default=datetime.utcnow)
+
+    journeys = ListField(ReferenceField(Journeys))
 
     meta = {'collection': 'users'}
 
