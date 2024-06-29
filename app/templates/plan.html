@@ -1,0 +1,27 @@
+<!-- app/templates/plan.html -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>時光旅人 - 旅行規劃</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='plan/style.css') }}">
+</head>
+<body>
+
+    {% include 'partials/popup.html' %}
+    {% include 'partials/notification.html' %}
+
+    <div class="container">
+        <h1>時光旅人(開發介面)</h1>
+        <div id="chatContainer">
+            <div id="chatBox"></div>
+            <div id="inputContainer">
+                <input type="text" id="userInput" placeholder="請輸入您的旅行需求...">
+                <button id="sendButton">送出</button>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='plan/script.js') }}"></script>
+</body>
+</html>

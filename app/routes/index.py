@@ -1,5 +1,5 @@
 # app/routes/index.py
-from flask import Blueprint, render_template, session, url_for
+from flask import Blueprint, render_template
 
 index_bp = Blueprint('index', __name__)
 

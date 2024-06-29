@@ -10,7 +10,7 @@
     }
 }
 
-.overlay {
+.popupOverlay {
     display: none;
     align-items: center;
     justify-content: center;
