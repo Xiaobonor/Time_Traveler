@@ -1,8 +1,10 @@
 // app/static/plan/script.js
 let questions = [];
+let newTrip = true;
 let answers = {};
 let currentQuestion = null;
 let turnstileToken = '';
+let socket = null;
 
 document.getElementById('sendButton').addEventListener('click', async function() {
     await handleUserInput();
@@ -21,19 +23,30 @@ async function handleUserInput() {
     appendMessage(userInput, 'user');
     document.getElementById('userInput').value = '';
 
-    if (questions.length === 0) {
+    if (socket) {
+        socket.emit('message', { message: userInput });
+    }
+
+    if (newTrip) {
         await sendRequest(userInput);
+        newTrip = false;
     } else if (currentQuestion) {
         answers[currentQuestion.id] = userInput;
-        displayNextQuestion();
+        if (questions.length === 0) {
+            await submitAnswers();
+        } else {
+            displayNextQuestion();
+        }
     }
 }
 
 async function sendRequest(userInput) {
-    if (!turnstileToken) {
-        alert('請完成驗證');
-        return;
+    while (!turnstileToken) {
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
+
+    const chatBox = document.getElementById('chatBox');
+    chatBox.classList.remove('loading');
 
     const response = await fetch('/submit_request', {
         method: 'POST',
@@ -51,7 +64,7 @@ async function sendRequest(userInput) {
         questions = data.questions;
         displayNextQuestion();
     } else {
-        alert('驗證失敗，請重試');
+        showError({ title: '錯誤', message: '無法處理您的請求' });
     }
 
     refreshTurnstile();
@@ -59,7 +72,7 @@ async function sendRequest(userInput) {
 
 async function submitAnswers() {
     if (!turnstileToken) {
-        alert('請完成驗證');
+        showError({ title: '驗證失敗', message: '驗證金鑰無效，請稍後再試' });
         return;
     }
 
@@ -76,14 +89,10 @@ async function submitAnswers() {
 
     const data = await response.json();
     if (data.success) {
-        if (data.success) {
-            displayFinalPlan(data.plan);
-        } else {
-            questions = data.questions;
-            displayNextQuestion();
-        }
+        displayFinalPlan(data.plan);
     } else {
-        alert('驗證失敗，請重試');
+        questions = data.questions;
+        displayNextQuestion();
     }
 
     refreshTurnstile();
@@ -154,6 +163,24 @@ function displayFinalPlan(plan) {
 function turnstileCallback(token) {
     turnstileToken = token;
     console.log('Turnstile token received:', token);
+    document.getElementById('chatBox').classList.remove('loading');
+
+    // Connect to the server after getting the token
+    if (newTrip) {
+        socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
+        socket.on('connect', () => {
+            console.log('Connected to the server');
+        });
+
+        socket.on('status_update', (data) => {
+            appendMessage(data.message, 'system');
+        });
+
+        socket.on('message', (data) => {
+            appendMessage(data.message, 'system');
+        });
+    }
 }
 
 function refreshTurnstile() {

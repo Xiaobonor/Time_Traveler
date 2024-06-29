@@ -10,6 +10,7 @@ This is a web application that helps users plan and manage their travel experien
 * Framework: Flask
 * Database: MongoDB
 * Cache: Redis  
+* Captcha: Cloudflare Turnstile  
 ... more to be added
 
 ## IMPORTANT

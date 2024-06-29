@@ -16,13 +16,15 @@
     <div class="container">
         <h1>時光旅人(開發介面)</h1>
         <div id="chatContainer">
-            <div id="chatBox"></div>
+            <div id="chatBox" class="loading"></div>
             <div id="inputContainer">
                 <input type="text" id="userInput" placeholder="請輸入您的旅行需求...">
                 <button id="sendButton">送出</button>
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="{{ url_for('static', filename='plan/script.js') }}"></script>
 </body>

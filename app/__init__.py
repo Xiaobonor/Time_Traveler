@@ -74,4 +74,7 @@ def create_app():
     app.register_blueprint(index_bp)
     app.register_blueprint(plan_bp)
 
+    # Here to register sockets
+    from app.socket_handlers.connect_disconnect import socketio as connect_disconnect_socketio
+
     return app

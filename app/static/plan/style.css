@@ -23,11 +23,12 @@ h1 {
 #chatContainer {
     display: flex;
     flex-direction: column;
-    height: 500px;
+    height: 700px;
     border: 1px solid #ddd;
     padding: 10px;
     border-radius: 10px;
     background: #fafafa;
+    position: relative;
 }
 
 #chatBox {
@@ -36,6 +37,7 @@ h1 {
     padding: 10px;
     border-bottom: 1px solid #ddd;
     animation: fadeIn 0.5s;
+    position: relative;
 }
 
 #inputContainer {
@@ -97,6 +99,20 @@ h1 {
     animation: fadeIn 0.5s;
 }
 
+#chatBox.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    margin: -25px 0 0 -25px;
+    border: 5px solid #007BFF;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -106,4 +122,9 @@ h1 {
 @keyframes slideIn {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
