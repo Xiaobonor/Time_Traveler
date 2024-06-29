@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template, request, jsonify
 
 from app.utils.auth_utils import login_required
+from app.utils.turnstile import turnstile_required
 
 plan_bp = Blueprint('plan', __name__)
 
@@ -32,21 +33,26 @@ mock_plan = {
 
 responses = {}
 
+
 @plan_bp.route('/plan')
 @login_required
 def index():
     return render_template('plan.html')
 
+
 @plan_bp.route('/submit_request', methods=['POST'])
 @login_required
+@turnstile_required
 def submit_request():
     data = request.json
     initial_request = data['request']
-    questions_to_ask = mock_questions  # Return all questions for now
-    return jsonify({'questions': questions_to_ask})
+    questions_to_ask = mock_questions
+    return jsonify({'success': True, 'questions': questions_to_ask})
+
 
 @plan_bp.route('/submit_answers', methods=['POST'])
 @login_required
+@turnstile_required
 def submit_answers():
     global responses
     data = request.json
@@ -54,7 +60,7 @@ def submit_answers():
     responses.update(answers)
 
     # For simplicity, assume no follow-up questions for now
-    if len(responses) == len(mock_questions):
-        return jsonify({'completed': True, 'plan': mock_plan})
+    if len(answers) == len(mock_questions):
+        return jsonify({'success': True, 'plan': mock_plan})
     else:
-        return jsonify({'completed': False, 'questions': [mock_questions[len(responses)]]})
+        return jsonify({'success': False, 'questions': [mock_questions[len(responses)]]})

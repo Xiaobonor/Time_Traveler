@@ -1,7 +1,20 @@
+// app/static/plan/script.js
 let questions = [];
 let answers = {};
+let currentQuestion = null;
+let turnstileToken = '';
 
 document.getElementById('sendButton').addEventListener('click', async function() {
+    await handleUserInput();
+});
+
+document.getElementById('userInput').addEventListener('keydown', async function(event) {
+    if (event.key === 'Enter') {
+        await handleUserInput();
+    }
+});
+
+async function handleUserInput() {
     const userInput = document.getElementById('userInput').value;
     if (!userInput) return;
 
@@ -9,37 +22,71 @@ document.getElementById('sendButton').addEventListener('click', async function()
     document.getElementById('userInput').value = '';
 
     if (questions.length === 0) {
-        const response = await fetch('/submit_request', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ request: userInput })
-        });
+        await sendRequest(userInput);
+    } else if (currentQuestion) {
+        answers[currentQuestion.id] = userInput;
+        displayNextQuestion();
+    }
+}
 
-        const data = await response.json();
-        questions = data.questions;
+async function sendRequest(userInput) {
+    if (!turnstileToken) {
+        alert('請完成驗證');
+        return;
     }
 
-    displayNextQuestion();
-});
+    const response = await fetch('/submit_request', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            request: userInput,
+            'cf-turnstile-response': turnstileToken
+        })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+        questions = data.questions;
+        displayNextQuestion();
+    } else {
+        alert('驗證失敗，請重試');
+    }
+
+    refreshTurnstile();
+}
 
 async function submitAnswers() {
+    if (!turnstileToken) {
+        alert('請完成驗證');
+        return;
+    }
+
     const response = await fetch('/submit_answers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ answers: answers })
+        body: JSON.stringify({
+            answers: answers,
+            'cf-turnstile-response': turnstileToken
+        })
     });
 
     const data = await response.json();
-    if (data.completed) {
-        displayFinalPlan(data.plan);
+    if (data.success) {
+        if (data.success) {
+            displayFinalPlan(data.plan);
+        } else {
+            questions = data.questions;
+            displayNextQuestion();
+        }
     } else {
-        questions = data.questions;
-        displayNextQuestion();
+        alert('驗證失敗，請重試');
     }
+
+    refreshTurnstile();
 }
 
 function appendMessage(message, sender) {
@@ -54,37 +101,38 @@ function appendMessage(message, sender) {
 function displayNextQuestion() {
     if (questions.length === 0) return;
 
-    const question = questions.shift();
+    currentQuestion = questions.shift();
     const chatBox = document.getElementById('chatBox');
     const questionDiv = document.createElement('div');
     questionDiv.className = 'system';
-    questionDiv.innerText = question.text;
+    questionDiv.innerText = currentQuestion.text;
 
-    question.options.forEach(option => {
+    currentQuestion.options.forEach(option => {
         const optionDiv = document.createElement('div');
         optionDiv.className = 'option-card';
         optionDiv.innerText = option;
-        optionDiv.addEventListener('click', () => {
-            answers[question.id] = option;
+        optionDiv.addEventListener('click', async () => {
+            answers[currentQuestion.id] = option;
             appendMessage(option, 'user');
-            displayNextQuestion();
+            disablePreviousOptions();
+            if (questions.length === 0) {
+                await submitAnswers();
+            } else {
+                displayNextQuestion();
+            }
         });
         questionDiv.appendChild(optionDiv);
     });
 
     chatBox.appendChild(questionDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-    document.getElementById('userInput').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            const userInput = document.getElementById('userInput').value;
-            if (!userInput) return;
-
-            answers[question.id] = userInput;
-            appendMessage(userInput, 'user');
-            document.getElementById('userInput').value = '';
-            displayNextQuestion();
-        }
+function disablePreviousOptions() {
+    const optionCards = document.querySelectorAll('.option-card');
+    optionCards.forEach(card => {
+        card.style.pointerEvents = 'none';
+        card.style.opacity = '0.5';
     });
 }
 
@@ -101,4 +149,18 @@ function displayFinalPlan(plan) {
     `;
     chatBox.appendChild(planDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function turnstileCallback(token) {
+    turnstileToken = token;
+    console.log('Turnstile token received:', token);
+}
+
+function refreshTurnstile() {
+    turnstileToken = '';
+    turnstile.render('.cf-turnstile', {
+        sitekey: '',
+        callback: turnstileCallback,
+        action: 'travel_plan'
+    });
 }
