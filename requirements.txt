@@ -10,3 +10,9 @@ mongoengine==0.28.2
 Authlib==1.3.1
 redis==5.0.6
 requests==2.32.3
+json-repair==0.25.2
+
+msrest==0.7.1
+azure-common==1.1.28
+msrestazure==0.6.4.post1
+microsoft-bing-websearch==1.0.0

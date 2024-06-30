@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         popupOverlay.style.display = 'flex';
     }
 
-    fetch('https://xiaobo.tw/v1/cors/flash_messages', {
+    fetch(location.protocol + '//' + document.domain + '/api/v1/flash_messages', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

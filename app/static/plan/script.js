@@ -173,6 +173,11 @@ function turnstileCallback(token) {
             console.log('Connected to the server');
         });
 
+        socket.on('disconnect', () => {
+            appendMessage('🌐 與伺服器斷開連接', 'system');
+            console.log('Disconnected from the server');
+        });
+
         socket.on('status_update', (data) => {
             appendMessage(data.message, 'system');
         });
