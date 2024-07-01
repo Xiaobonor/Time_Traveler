@@ -12,7 +12,7 @@ redis==5.0.6
 requests==2.32.3
 json-repair==0.25.2
 
-msrest==0.7.1
-azure-common==1.1.28
-msrestazure==0.6.4.post1
-microsoft-bing-websearch==1.0.0
+json_repair==0.25.2
+tiktoken==0.7.0
+aiohttp==3.9.5
+beautifulsoup4==4.12.3
