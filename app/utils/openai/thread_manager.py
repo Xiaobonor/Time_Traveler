@@ -46,18 +46,13 @@ async def create_run(thread_id: str, assistant_id: str):
     return await openai.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
 
 
-async def list_runs(thread_id: str):
+async def get_runs_by_thread(thread_id: str):
     return await openai.beta.threads.runs.list(thread_id=thread_id)
 
 
-def read_thread_data(filename: str = 'data.json'):
-    if os.path.exists(filename):
-        with open(filename, 'r') as file:
-            return json.load(file)
-    return {}
-
-
-def save_thread_data(thread_id: str, filename: str = 'data.json'):
-    data = {'thread_id': thread_id}
-    with open(filename, 'w') as file:
-        json.dump(data, file)
+async def submit_tool_outputs_and_poll(thread_id: str, run_id: str, tool_outputs: list):
+    return await openai.beta.threads.runs.submit_tool_outputs_and_poll(
+        thread_id=thread_id,
+        run_id=run_id,
+        tool_outputs=tool_outputs
+    )
