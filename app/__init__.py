@@ -11,13 +11,13 @@ from flask_socketio import SocketIO
 from dotenv import load_dotenv
 from mongoengine import connect
 from authlib.integrations.flask_client import OAuth
-from async_openai import OpenAI
+from async_openai import OpenAI, OpenAIClient
 from redis import Redis
 
 socketio = SocketIO()
 cors = CORS()
 oauth = OAuth()
-openai = None
+openai = OpenAIClient()
 
 
 def create_app():

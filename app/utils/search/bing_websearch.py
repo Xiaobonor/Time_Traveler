@@ -12,16 +12,18 @@ if not subscription_key or not endpoint:
     raise ValueError("Bing Search API subscription key or endpoint not found in environment variables.")
 
 
-async def web_search_bing(query, count=10, web_page=True, image=False, news=False, video=False, fetch_content=True):
+async def web_search_bing(query, count=10, offset=0, web_page=True, image=False, news=False, video=False, fetch_content=True, content_length_limit=3000):
     """
     Use Bing Web Search to search the web for results.
     :param query: What you want to search for.
     :param count: The number of results you want.
+    :param offset: The number of results to skip.
     :param web_page: Whether to include web page results.
     :param image: Whether to include image results.
     :param news: Whether to include news results.
     :param video: Whether to include video results.
     :param fetch_content: Whether to fetch and display the content of the web page results.
+    :param content_length_limit: Maximum number of characters to fetch for each webpage content.
     :return: A list of results, json format.
     """
     headers = {'Ocp-Apim-Subscription-Key': subscription_key}
@@ -39,6 +41,7 @@ async def web_search_bing(query, count=10, web_page=True, image=False, news=Fals
     params = {
         'q': query,
         'count': count,
+        'offset': offset,
         'responseFilter': ','.join(response_filter)
     }
 
@@ -47,11 +50,11 @@ async def web_search_bing(query, count=10, web_page=True, image=False, news=Fals
         response.raise_for_status()
         search_results = response.json()
 
-        if 'webPages' in search_results and fetch_content:  
-            tasks = [get_webpage_content(page['url']) for page in search_results['webPages']['value']]
+        if 'webPages' in search_results and fetch_content:
+            tasks = [get_webpage_content(page['url'], content_length_limit) for page in search_results['webPages']['value']]
             contents = await asyncio.gather(*tasks)
 
-            for i, page in enumerate(search_results['webPages']['value']):  
+            for i, page in enumerate(search_results['webPages']['value']):
                 title, content = contents[i]
                 search_results['webPages']['value'][i]['content'] = {
                     'page_title': title,

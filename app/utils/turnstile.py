@@ -16,6 +16,10 @@ def verify_turnstile(response_token):
 
 
 def turnstile_required(f):
+    """
+    Decorator to verify the turnstile response
+    This need cloudflare turnstile secret key to be set in the environment
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         data = request.json

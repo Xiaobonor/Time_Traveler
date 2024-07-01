@@ -3,6 +3,12 @@ from app import openai
 
 
 async def generate_text_with_messages(messages, model="gpt-4o"):
+    """
+    Generate text using custom messages
+    :param messages: should be a list of dictionaries with keys "role" and "content"
+    :param model: model to use
+    :return: generated text and usage
+    """
     completion = openai.chat.create(
         model=model,
         messages=messages
@@ -13,6 +19,14 @@ async def generate_text_with_messages(messages, model="gpt-4o"):
 
 
 async def generate_text(system_prompt, user_prompt, model="gpt-4o"):
+    """
+    Generate text using system and user prompts
+    This is a one-time use function, use generate_text_with_messages for multiple messages
+    :param system_prompt: system prompt for message
+    :param user_prompt: user input
+    :param model: model to use
+    :return: generated text and usage
+    """
     completion = openai.chat.create(
         model=model,
         messages=[
