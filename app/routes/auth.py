@@ -1,5 +1,5 @@
 # app/routes/auth.py
-from flask import Blueprint, redirect, url_for, session, flash
+from flask import Blueprint, redirect, url_for, session, flash, request
 from app import oauth
 from app.models.user import User
 import os
@@ -24,7 +24,10 @@ google = oauth.register(
 @auth_bp.route('/login')
 def login():
     if 'user_info' in session:
-        return redirect(url_for('dashboard.home'))
+        return redirect(url_for('dashboard.home')) # TODO: Change to the dashboard route
+
+    next_url = request.args.get('next') or url_for('index.home')
+    session['next_url'] = next_url
     redirect_uri = url_for('auth.authorize', _external=True)
     return google.authorize_redirect(redirect_uri)
 
@@ -66,7 +69,10 @@ def authorize():
         session.permanent = True
         session.modified = True
 
-        return redirect(url_for('dashboard.home'))
+        next_url = session.pop('next_url', url_for('index.home'))
+        response = redirect(next_url)
+
+        return response
     except Exception as e:
         print(e)
         return handle_auth_error()
