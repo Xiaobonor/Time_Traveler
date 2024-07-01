@@ -2,7 +2,7 @@
 from app import openai
 
 
-async def generate_text_with_messages(messages, model="gpt-4o"):
+async def generate_text_with_messages(messages, model="gpt4o"):
     """
     Generate text using custom messages
     :param messages: should be a list of dictionaries with keys "role" and "content"
@@ -18,7 +18,7 @@ async def generate_text_with_messages(messages, model="gpt-4o"):
     return message.content, usage
 
 
-async def generate_text(system_prompt, user_prompt, model="gpt-4o"):
+async def generate_text(system_prompt, user_prompt, model="gpt4o"):
     """
     Generate text using system and user prompts
     This is a one-time use function, use generate_text_with_messages for multiple messages

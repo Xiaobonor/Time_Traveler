@@ -12,7 +12,8 @@ if not subscription_key or not endpoint:
     raise ValueError("Bing Search API subscription key or endpoint not found in environment variables.")
 
 
-async def web_search_bing(query, count=10, offset=0, web_page=True, image=False, news=False, video=False, fetch_content=True, content_length_limit=3000):
+async def web_search_bing(query: str, count=10, offset=0, web_page=True, image=False, news=False, video=False, \
+                          fetch_content=True, content_length_limit=3000):
     """
     Use Bing Web Search to search the web for results.
     :param query: What you want to search for.
