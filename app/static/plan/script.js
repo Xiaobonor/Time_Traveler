@@ -31,7 +31,7 @@ async function handleUserInput() {
         await sendRequest(userInput);
         newTrip = false;
     } else if (currentQuestion) {
-        answers[currentQuestion.id] = userInput;
+        answers[currentQuestion.question] = userInput;
         if (questions.length === 0) {
             await submitAnswers();
         } else {
@@ -59,7 +59,7 @@ async function sendRequest(userInput) {
         success: function(data) {
             if (data.success) {
                 showNotification("🌐 請求已處理完成", 5000);
-                questions = data.questions;
+                questions = JSON.parse(data.questions).questions;
                 displayNextQuestion();
             } else {
                 showError({ title: '錯誤', message: '無法處理您的請求' });
@@ -91,7 +91,7 @@ async function submitAnswers() {
             if (data.success) {
                 displayFinalPlan(data.plan);
             } else {
-                questions = data.questions;
+                questions = JSON.parse(data.questions).questions;
                 displayNextQuestion();
             }
             refreshTurnstile();
@@ -112,11 +112,11 @@ function displayNextQuestion() {
     if (questions.length === 0) return;
 
     currentQuestion = questions.shift();
-    const questionDiv = $('<div>').addClass('system').text(currentQuestion.text);
+    const questionDiv = $('<div>').addClass('system').text(currentQuestion.question);
 
     currentQuestion.options.forEach(option => {
         const optionDiv = $('<div>').addClass('option-card').text(option).click(async () => {
-            answers[currentQuestion.id] = option;
+            answers[currentQuestion.question] = option;
             appendMessage(option, 'user');
             disablePreviousOptions();
             if (questions.length === 0) {

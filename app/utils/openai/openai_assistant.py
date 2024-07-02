@@ -73,11 +73,11 @@ class OpenAIAssistant:
             function_name = tool_call.function.name
             function_args = tool_call.function.arguments
             print(f"Function name: {function_name}")
+            print(f"Function arguments: {function_args}")
 
             if isinstance(function_args, str):
-                function_args = eval(function_args)
+                function_args = eval(function_args.replace("true", "True").replace("false", "False"))
 
-            print(f"Function arguments: {function_args}")
             function = get_function(function_name)
             if function:
                 output = await function(**function_args)

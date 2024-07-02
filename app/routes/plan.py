@@ -1,28 +1,12 @@
 # app/routes/plan.py
+import asyncio
 from flask import Blueprint, render_template, request, jsonify
 
+from app.utils.agents.travel_needs import TravelDemandAnalysisExpert
 from app.utils.auth_utils import login_required
 from app.utils.turnstile import turnstile_required
 
 plan_bp = Blueprint('plan', __name__)
-
-mock_questions = [
-    {
-        'id': 1,
-        'text': '您的旅程會有多少天？',
-        'options': ['3天', '5天', '7天']
-    },
-    {
-        'id': 2,
-        'text': '您有多少人同行？',
-        'options': ['1人', '2人', '3人']
-    },
-    {
-        'id': 3,
-        'text': '您對住宿有什麼要求？',
-        'options': ['經濟型', '舒適型', '豪華型']
-    }
-]
 
 mock_plan = {
     'schedule': 'Day 1: 抵達, Day 2: 觀光, Day 3: 返回',
@@ -45,9 +29,19 @@ def index():
 @turnstile_required
 def submit_request():
     data = request.json
-    initial_request = data['request']
-    questions_to_ask = mock_questions
-    return jsonify({'success': True, 'questions': questions_to_ask})
+    user_input = data['request']
+    try:
+        print(f"User input: {user_input}")
+        agent = TravelDemandAnalysisExpert()
+        print("Created agent")
+        thread_id = asyncio.run(agent.get_thread_id())
+        print(f"Thread ID: {thread_id}")
+        response = asyncio.run(agent.submit_analysis_request(user_input))
+        print(f"Response: {response}")
+        return jsonify({'success': True, 'questions': response, 'thread_id': thread_id})
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @plan_bp.route('/submit_answers', methods=['POST'])

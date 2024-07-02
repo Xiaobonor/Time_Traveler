@@ -23,7 +23,7 @@ TDAE = asyncio.run(assistant_manager.create_assistant(
                    "properties": {
                        "query": {
                            "type": "string",
-                           "description": "The search query string."
+                           "description": "The search query string, must in english.",
                        },
                        "count": {
                            "type": "integer",
