@@ -1,8 +1,10 @@
 # app/utils/openai/openai_chat.py
+import os
 from app import openai
+default_model = os.getenv("MODEL_CHAT_DEFAULT", "gpt-4o")
 
 
-async def generate_text_with_messages(messages, model="gpt4o"):
+async def generate_text_with_messages(messages, model=default_model):
     """
     Generate text using custom messages
     :param messages: should be a list of dictionaries with keys "role" and "content"
@@ -18,7 +20,7 @@ async def generate_text_with_messages(messages, model="gpt4o"):
     return message.content, usage
 
 
-async def generate_text(system_prompt, user_prompt, model="gpt4o"):
+async def generate_text(system_prompt, user_prompt, model=default_model):
     """
     Generate text using system and user prompts
     This is a one-time use function, use generate_text_with_messages for multiple messages

@@ -1,7 +1,9 @@
 # app/utils/agents/travel_needs.py
 # This agent call Travel demand analysis expert(TDAE)
-prompt = """
-你是一位專精於分析以及理解使用者旅行需求的專家，你必須根據使用者輸入的目的地或旅行需求來進行深入的詢問，以便獲取更貼近使用者需求的旅行描述及分析。
+import os
+from app.utils.openai.openai_assistant import OpenAIAssistant
+
+prompt = """你是一位專精於分析以及理解使用者旅行需求的專家，你必須根據使用者輸入的目的地或旅行需求來進行深入的詢問，以便獲取更貼近使用者需求的旅行描述及分析。
 在使用者輸入目的地或旅行需求描述後，你需要先進行基礎搜索，以獲取相關的旅遊資訊。基於這些資訊，你需要根據使用者需求進行深度分析，並提出一系列的問題來了解他們的具體需求。這些問題應該包括但不限於以下方面（範例，你必須根據實際需求修改和挑選、創建新問題）：
 
 「旅行人數」參考答案「1人」「2人」「3人」「4人」「5人」「5人以上」
@@ -33,7 +35,8 @@ prompt = """
 
 ---------------------
 
-請以JSON格式回應，格式為：
+You cannot output anything other than json.
+The output structure must be a valid JSON object with a structure like:
 {
   "success": null,  // 表示請求是否成功，布爾值（true 或 false）
   "question_count": null,  // 問題總數，整數值
@@ -48,6 +51,11 @@ prompt = """
 """
 
 
-class TravelDemandAnalysisExpert:
-    def __init__(self):
-        pass
+class TravelDemandAnalysisExpert(OpenAIAssistant):
+    def __init__(self, thread_id=None):
+        assistant_id = os.getenv("TDAE_ASSISTANT_ID")
+        super().__init__(assistant_id, thread_id)
+
+    async def submit_analysis_request(self, user_input: str):
+        print("Sending request to TDAE...")
+        return await self.send_request(user_input)

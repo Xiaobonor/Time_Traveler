@@ -6,22 +6,22 @@ let currentQuestion = null;
 let turnstileToken = '';
 let socket = null;
 
-document.getElementById('sendButton').addEventListener('click', async function() {
+$('#sendButton').click(async function() {
     await handleUserInput();
 });
 
-document.getElementById('userInput').addEventListener('keydown', async function(event) {
+$('#userInput').keydown(async function(event) {
     if (event.key === 'Enter') {
         await handleUserInput();
     }
 });
 
 async function handleUserInput() {
-    const userInput = document.getElementById('userInput').value;
+    const userInput = $('#userInput').val();
     if (!userInput) return;
 
     appendMessage(userInput, 'user');
-    document.getElementById('userInput').value = '';
+    $('#userInput').val('');
 
     if (socket) {
         socket.emit('message', { message: userInput });
@@ -45,29 +45,32 @@ async function sendRequest(userInput) {
         await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    const chatBox = document.getElementById('chatBox');
-    chatBox.classList.remove('loading');
+    $('#chatBox').removeClass('loading');
+    showNotification("🌐 已發送您的請求，處理中...", 5000);
 
-    const response = await fetch('/submit_request', {
+    $.ajax({
+        url: '/submit_request',
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+        contentType: 'application/json',
+        data: JSON.stringify({
             request: userInput,
             'cf-turnstile-response': turnstileToken
-        })
+        }),
+        success: function(data) {
+            if (data.success) {
+                showNotification("🌐 請求已處理完成", 5000);
+                questions = data.questions;
+                displayNextQuestion();
+            } else {
+                showError({ title: '錯誤', message: '無法處理您的請求' });
+            }
+            refreshTurnstile();
+        },
+        error: function() {
+            showError({ title: '錯誤', message: '無法處理您的請求' });
+            refreshTurnstile();
+        }
     });
-
-    const data = await response.json();
-    if (data.success) {
-        questions = data.questions;
-        displayNextQuestion();
-    } else {
-        showError({ title: '錯誤', message: '無法處理您的請求' });
-    }
-
-    refreshTurnstile();
 }
 
 async function submitAnswers() {
@@ -76,51 +79,43 @@ async function submitAnswers() {
         return;
     }
 
-    const response = await fetch('/submit_answers', {
+    $.ajax({
+        url: '/submit_answers',
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+        contentType: 'application/json',
+        data: JSON.stringify({
             answers: answers,
             'cf-turnstile-response': turnstileToken
-        })
+        }),
+        success: function(data) {
+            if (data.success) {
+                displayFinalPlan(data.plan);
+            } else {
+                questions = data.questions;
+                displayNextQuestion();
+            }
+            refreshTurnstile();
+        },
+        error: function() {
+            showError({ title: '錯誤', message: '無法提交您的回答' });
+            refreshTurnstile();
+        }
     });
-
-    const data = await response.json();
-    if (data.success) {
-        displayFinalPlan(data.plan);
-    } else {
-        questions = data.questions;
-        displayNextQuestion();
-    }
-
-    refreshTurnstile();
 }
 
 function appendMessage(message, sender) {
-    const chatBox = document.getElementById('chatBox');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = sender;
-    messageDiv.innerText = message;
-    chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    const messageDiv = $('<div>').addClass(sender).text(message);
+    $('#chatBox').append(messageDiv).scrollTop($('#chatBox')[0].scrollHeight);
 }
 
 function displayNextQuestion() {
     if (questions.length === 0) return;
 
     currentQuestion = questions.shift();
-    const chatBox = document.getElementById('chatBox');
-    const questionDiv = document.createElement('div');
-    questionDiv.className = 'system';
-    questionDiv.innerText = currentQuestion.text;
+    const questionDiv = $('<div>').addClass('system').text(currentQuestion.text);
 
     currentQuestion.options.forEach(option => {
-        const optionDiv = document.createElement('div');
-        optionDiv.className = 'option-card';
-        optionDiv.innerText = option;
-        optionDiv.addEventListener('click', async () => {
+        const optionDiv = $('<div>').addClass('option-card').text(option).click(async () => {
             answers[currentQuestion.id] = option;
             appendMessage(option, 'user');
             disablePreviousOptions();
@@ -130,42 +125,32 @@ function displayNextQuestion() {
                 displayNextQuestion();
             }
         });
-        questionDiv.appendChild(optionDiv);
+        questionDiv.append(optionDiv);
     });
 
-    chatBox.appendChild(questionDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    $('#chatBox').append(questionDiv).scrollTop($('#chatBox')[0].scrollHeight);
 }
 
 function disablePreviousOptions() {
-    const optionCards = document.querySelectorAll('.option-card');
-    optionCards.forEach(card => {
-        card.style.pointerEvents = 'none';
-        card.style.opacity = '0.5';
-    });
+    $('.option-card').css({ 'pointer-events': 'none', 'opacity': '0.5' });
 }
 
 function displayFinalPlan(plan) {
-    const chatBox = document.getElementById('chatBox');
-    const planDiv = document.createElement('div');
-    planDiv.className = 'system';
-    planDiv.innerHTML = `
+    const planDiv = $('<div>').addClass('system').html(`
         <h2>您的旅行計劃</h2>
         <p>行程安排: ${plan.schedule}</p>
         <p>景點: ${plan.attractions}</p>
         <p>餐廳: ${plan.restaurants}</p>
         <p>住宿: ${plan.accommodations}</p>
-    `;
-    chatBox.appendChild(planDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    `);
+    $('#chatBox').append(planDiv).scrollTop($('#chatBox')[0].scrollHeight);
 }
 
 function turnstileCallback(token) {
     turnstileToken = token;
     console.log('Turnstile token received:', token);
-    document.getElementById('chatBox').classList.remove('loading');
+    $('#chatBox').removeClass('loading');
 
-    // Connect to the server after getting the token
     if (newTrip) {
         socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
