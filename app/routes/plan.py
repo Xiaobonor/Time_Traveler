@@ -54,12 +54,12 @@ def submit_answers():
     session['answers'] = session_answers
 
     try:
+        agent = pickle.loads(session.get('agent'))
         print("Submitting answers to review....")
         response, usage = asyncio.run(travel_needs_check(str(session_answers)))
         print(f"Response: {response['success']}, comment: {response['comment']}")
         if not response['success']:
             print("Reviewer think it was not a good request, get agent to ask again...")
-            agent = pickle.loads(session.get('agent'))
             thread_id = asyncio.run(agent.get_thread_id())
             print(f"Thread ID: {thread_id}")
             print("Start question again...")
@@ -69,6 +69,8 @@ def submit_answers():
         else:
             print("Reviewer think it was a good request, returning success...")
             # TODO: generate trip plan
+            session.pop('agent')
+            del agent
             return jsonify({'success': True, 'new_question': False, 'response': response})
     except Exception as e:
         print(f"Error: {e}")

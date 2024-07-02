@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時光旅人 - 旅行規劃</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='plan/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
@@ -13,8 +14,18 @@
     {% include 'partials/notification.html' %}
 
     <div class="cf-turnstile" data-sitekey="" data-callback="turnstileCallback" data-action="travel_plan"></div>
+
+    <div id="mapContainer" class="map-container">
+        {% include 'partials/mapbox.html' %}
+    </div>
+
     <div class="container">
         <h1>時光旅人(開發介面)</h1>
+        <div id="iconContainer">
+            <i class="fas fa-map fa-lg icon" id="toggleMap" title="展開地圖"></i>
+            <i class="fas fa-landmark fa-lg icon" id="toggleAttractions" title="展開景點"></i>
+            <i class="fas fa-calendar-alt fa-lg icon" id="toggleOverview" title="展開行程概覽"></i>
+        </div>
         <div id="chatContainer">
             <div id="chatBox" class="loading"></div>
             <div id="inputContainer">

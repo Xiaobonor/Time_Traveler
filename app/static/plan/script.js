@@ -205,3 +205,23 @@ function refreshTurnstile() {
         action: 'travel_plan'
     });
 }
+
+// Container icon buttons
+
+$(document).ready(function() {
+    $('#toggleMap').click(function() {
+        const mapContainer = $('#mapContainer');
+        mapContainer.toggleClass('active');
+        $('.container').toggleClass('map-active');
+        $(this).toggleClass('icon-toggle active');
+    });
+
+
+    $('#toggleAttractions').click(function() {
+        $(this).toggleClass('icon-toggle active');
+    });
+
+    $('#toggleOverview').click(function() {
+        $(this).toggleClass('icon-toggle active');
+    });
+});
