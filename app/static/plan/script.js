@@ -16,12 +16,23 @@ $('#userInput').keydown(async function(event) {
     }
 });
 
+function disableInput() {
+    $('#userInput').attr('disabled', true);
+    $('#sendButton').attr('disabled', true);
+}
+
+function enableInput() {
+    $('#userInput').attr('disabled', false);
+    $('#sendButton').attr('disabled', false);
+}
+
 async function handleUserInput() {
     const userInput = $('#userInput').val();
     if (!userInput) return;
 
     appendMessage(userInput, 'user');
     $('#userInput').val('');
+    disableInput();
 
     if (socket) {
         socket.emit('message', { message: userInput });
@@ -57,6 +68,7 @@ async function sendRequest(userInput) {
             'cf-turnstile-response': turnstileToken
         }),
         success: function(data) {
+            enableInput();
             if (data.success) {
                 showNotification("🌐 請求已處理完成", 5000);
                 questions = JSON.parse(data.questions).questions;
@@ -67,6 +79,7 @@ async function sendRequest(userInput) {
             refreshTurnstile();
         },
         error: function() {
+            enableInput();
             showError({ title: '錯誤', message: '無法處理您的請求' });
             refreshTurnstile();
         }
@@ -79,6 +92,7 @@ async function submitAnswers() {
         return;
     }
 
+    disableInput();
     $.ajax({
         url: '/submit_answers',
         method: 'POST',
@@ -88,6 +102,7 @@ async function submitAnswers() {
             'cf-turnstile-response': turnstileToken
         }),
         success: function(data) {
+            enableInput();
             if (data.success) {
                 if (data.new_question) {
                     questions = JSON.parse(data.questions).questions;
@@ -101,6 +116,7 @@ async function submitAnswers() {
             refreshTurnstile();
         },
         error: function() {
+            enableInput();
             showError({ title: '錯誤', message: '無法提交您的回答' });
             refreshTurnstile();
         }

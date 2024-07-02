@@ -128,3 +128,13 @@ h1 {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+#userInput:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+#sendButton:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
