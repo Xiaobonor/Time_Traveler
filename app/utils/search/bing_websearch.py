@@ -8,8 +8,6 @@ from app.utils.search.webpage_content import get_webpage_content
 # Load environment variables at the beginning
 subscription_key = os.getenv('AZURE_BING_SEARCH_API_KEY')
 endpoint = os.getenv('AZURE_BING_SEARCH_ENDPOINT')
-if not subscription_key or not endpoint:
-    raise ValueError("Bing Search API subscription key or endpoint not found in environment variables.")
 
 
 async def web_search_bing(query: str, count=10, offset=0, web_page=True, image=False, news=False, video=False,

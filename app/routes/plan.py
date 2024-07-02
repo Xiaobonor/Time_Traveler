@@ -1,21 +1,15 @@
 # app/routes/plan.py
 import asyncio
-from flask import Blueprint, render_template, request, jsonify
+import pickle
 
-from app.utils.agents.travel_needs import TravelDemandAnalysisExpert
+from flask import Blueprint, render_template, request, jsonify, session
+
+from app.utils.agents.assistant.travel_needs import TravelDemandAnalysisExpert
+from app.utils.agents.travel_needs_check import travel_needs_check
 from app.utils.auth_utils import login_required
 from app.utils.turnstile import turnstile_required
 
 plan_bp = Blueprint('plan', __name__)
-
-mock_plan = {
-    'schedule': 'Day 1: 抵達, Day 2: 觀光, Day 3: 返回',
-    'attractions': '博物館, 公園, 海灘',
-    'restaurants': '當地餐廳, 海鮮店, 咖啡廳',
-    'accommodations': '酒店, 民宿, 度假村'
-}
-
-responses = {}
 
 
 @plan_bp.route('/plan')
@@ -33,6 +27,7 @@ def submit_request():
     try:
         print(f"User input: {user_input}")
         agent = TravelDemandAnalysisExpert()
+        session['agent'] = pickle.dumps(agent)
         print("Created agent")
         thread_id = asyncio.run(agent.get_thread_id())
         print(f"Thread ID: {thread_id}")
@@ -48,13 +43,29 @@ def submit_request():
 @login_required
 @turnstile_required
 def submit_answers():
-    global responses
+    if 'agent' not in session:
+        return jsonify({'success': False, 'error': 'No agent found in session'})
+
+    print("Got answers")
     data = request.json
     answers = data['answers']
-    responses.update(answers)
-
-    # For simplicity, assume no follow-up questions for now
-    if len(answers) == len(mock_questions):
-        return jsonify({'success': True, 'plan': mock_plan})
-    else:
-        return jsonify({'success': False, 'questions': [mock_questions[len(responses)]]})
+    try:
+        print("Submitting answers to review....")
+        response, usage = asyncio.run(travel_needs_check(str(answers)))
+        print(f"Response: {response['success']}, comment: {response['comment']}")
+        if not response['success']:
+            print("Reviewer think it was not a good request, get agent to ask again...")
+            agent = pickle.loads(session.get('agent'))
+            thread_id = asyncio.run(agent.get_thread_id())
+            print(f"Thread ID: {thread_id}")
+            print("Start question again...")
+            response = asyncio.run(agent.submit_analysis_request(response['comment']))
+            print(f"Response: {response}")
+            return jsonify({'success': True, 'new_question': True, 'questions': response, 'thread_id': thread_id})
+        else:
+            print("Reviewer think it was a good request, returning success...")
+            # TODO: generate trip plan
+            return jsonify({'success': True, 'new_question': False, 'response': response})
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'success': False, 'error': str(e)})

@@ -29,6 +29,7 @@ async def generate_text(system_prompt, user_prompt, model=default_model):
     :param model: model to use
     :return: generated text and usage
     """
+    print("Generating text...")
     completion = await openai.chat.completions.create(
         model=model,
         messages=[

@@ -6,7 +6,7 @@ from app import create_app
 app = create_app()
 
 import app.utils.openai.assistant_manager as assistant_manager
-from app.utils.agents.travel_needs import prompt as TDAE_prompt
+from app.utils.agents.assistant.travel_needs import prompt as TDAE_prompt
 
 # Travel demand analysis expert(TDAE)
 TDAE = asyncio.run(assistant_manager.create_assistant(

@@ -89,10 +89,14 @@ async function submitAnswers() {
         }),
         success: function(data) {
             if (data.success) {
-                displayFinalPlan(data.plan);
+                if (data.new_question) {
+                    questions = JSON.parse(data.questions).questions;
+                    displayNextQuestion();
+                } else {
+                    displayFinalPlan(data.response);
+                }
             } else {
-                questions = JSON.parse(data.questions).questions;
-                displayNextQuestion();
+                showError({ title: '錯誤', message: data.error || '無法提交您的回答' });
             }
             refreshTurnstile();
         },
@@ -114,19 +118,23 @@ function displayNextQuestion() {
     currentQuestion = questions.shift();
     const questionDiv = $('<div>').addClass('system').text(currentQuestion.question);
 
-    currentQuestion.options.forEach(option => {
-        const optionDiv = $('<div>').addClass('option-card').text(option).click(async () => {
-            answers[currentQuestion.question] = option;
-            appendMessage(option, 'user');
-            disablePreviousOptions();
-            if (questions.length === 0) {
-                await submitAnswers();
-            } else {
-                displayNextQuestion();
-            }
+    if (currentQuestion.options && currentQuestion.options.length > 0) {
+        currentQuestion.options.forEach(option => {
+            const optionDiv = $('<div>').addClass('option-card').text(option).click(async () => {
+                answers[currentQuestion.question] = option;
+                appendMessage(option, 'user');
+                disablePreviousOptions();
+                if (questions.length === 0) {
+                    await submitAnswers();
+                } else {
+                    displayNextQuestion();
+                }
+            });
+            questionDiv.append(optionDiv);
         });
-        questionDiv.append(optionDiv);
-    });
+    } else {
+        questionDiv.append($('<div>').addClass('option-card').text('請輸入您的回答'));
+    }
 
     $('#chatBox').append(questionDiv).scrollTop($('#chatBox')[0].scrollHeight);
 }

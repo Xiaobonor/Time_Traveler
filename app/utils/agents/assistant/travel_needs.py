@@ -36,7 +36,7 @@ prompt = """你是一位專精於分析以及理解使用者旅行需求的專�
 ---------------------
 
 You cannot output anything other than json, just a json object.
-Output structure must be a valid JSON object and without space or newline.
+Output structure must be a valid JSON object and without space or newline or codeblock.
 The output structure must be a valid JSON object with a structure like:
 {
   "success": null,  // 表示請求是否成功，布爾值（true 或 false）
