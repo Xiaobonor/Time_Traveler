@@ -111,6 +111,9 @@ TURNSTILE_SECRET_KEY=""
 # -- Database --
 MONGO_URI=""
 REDIS_URI=""
+
+# -- Assistant --
+TADE_ID=""
 ```
 
 #### 3️⃣ Run the app

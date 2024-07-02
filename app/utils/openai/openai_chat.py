@@ -9,7 +9,7 @@ async def generate_text_with_messages(messages, model="gpt4o"):
     :param model: model to use
     :return: generated text and usage
     """
-    completion = openai.chat.create(
+    completion = await openai.chat.completions.create(
         model=model,
         messages=messages
     )
@@ -27,7 +27,7 @@ async def generate_text(system_prompt, user_prompt, model="gpt4o"):
     :param model: model to use
     :return: generated text and usage
     """
-    completion = openai.chat.create(
+    completion = await openai.chat.completions.create(
         model=model,
         messages=[
             {"role": "system", "content": system_prompt},

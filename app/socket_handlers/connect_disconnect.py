@@ -3,6 +3,7 @@ from flask import session
 from flask_socketio import emit, join_room
 from app import socketio
 
+
 @socketio.on('connect')
 def handle_connect():
     user_id = session.get('user_info')['google_id']
