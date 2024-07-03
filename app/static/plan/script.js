@@ -108,7 +108,20 @@ async function submitAnswers() {
                     questions = JSON.parse(data.questions).questions;
                     displayNextQuestion();
                 } else {
-                    displayFinalPlan(data.response);
+                    clearLandmarks();
+                    clearAttractions();
+                    const response = JSON.parse(data.response);
+                    if (response.sections && response.sections.length > 0) {
+                        response.sections.forEach(section => {
+                            if (section.landmarks) {
+                                addLandmark(section.landmarks);
+                            }
+                            addAttraction(section);
+                        });
+                        displayFinalPlan(response.sections);
+                    } else {
+                        showError({ title: '錯誤', message: '沒有找到旅行計劃的相關信息' });
+                    }
                 }
             } else {
                 showError({ title: '錯誤', message: data.error || '無法提交您的回答' });
@@ -159,15 +172,20 @@ function disablePreviousOptions() {
     $('.option-card').css({ 'pointer-events': 'none', 'opacity': '0.5' });
 }
 
-function displayFinalPlan(plan) {
-    const planDiv = $('<div>').addClass('system').html(`
-        <h2>您的旅行計劃</h2>
-        <p>行程安排: ${plan.schedule}</p>
-        <p>景點: ${plan.attractions}</p>
-        <p>餐廳: ${plan.restaurants}</p>
-        <p>住宿: ${plan.accommodations}</p>
-    `);
-    $('#chatBox').append(planDiv).scrollTop($('#chatBox')[0].scrollHeight);
+function displayFinalPlan(sections) {
+    sections.forEach(section => {
+        const planDiv = $('<div>').addClass('system').html(`
+            <h2>${section.title}</h2>
+            <p>${section.description}</p>
+            <img src="${section.image}" alt="${section.title}" class="plan-image">
+            <p>位置: ${section.location}</p>
+            <p>交通方式: ${section.transportation}</p>
+            <p>住宿: ${section.accommodation}</p>
+            <p>餐廳: ${section.restaurant}</p>
+            <p>活動: ${section.activity}</p>
+        `);
+        $('#chatBox').append(planDiv).scrollTop($('#chatBox')[0].scrollHeight);
+    });
 }
 
 function turnstileCallback(token) {
@@ -240,98 +258,117 @@ $(document).ready(function() {
     $('#toggleOverview').click(function() {
         $(this).toggleClass('icon-toggle active');
     });
-
-    const attractions = [
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-    ];
-
-    attractions.forEach(attraction => {
-        const card = $(`
-            <div class="attraction-card">
-                <img src="${attraction.image}" alt="${attraction.title}" class="attraction-image">
-                <h3>${attraction.title}</h3>
-                <p>${attraction.description}</p>
-            </div>
-        `);
-        $('#attractionContainer').append(card);
-    });
+    //
+    // const attractions = [
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。',
+    //         image: 'https://www.taiwan.net.tw/pic.ashx?qp=1/big_scenic_spots/pic_74_4.jpg&sizetype=3'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image1.jpg'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image1.jpg'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image1.jpg'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image1.jpg'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image1.jpg'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image1.jpg'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    //     {
+    //         title: '景點1',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image1.jpg'
+    //     },
+    //     {
+    //         title: '景點2',
+    //         description: '這是一個很棒的景點，非常值得一遊。',
+    //         image: 'path/to/image2.jpg'
+    //     },
+    // ];
+    //
+    // attractions.forEach(section => {
+    //     const card = $(`
+    //     <div class="attraction-card">
+    //         <img src="${section.image}" alt="${section.title}" class="attraction-image">
+    //         <div class="attraction-card-content">
+    //             <h3>${section.title}</h3>
+    //             <p>${section.description}</p>
+    //         </div>
+    //     </div>
+    //     `);
+    //     $('#attractionContainer').append(card);
+    // });
 });
+
+function addAttraction(section) {
+    const attractionCard = $(`
+        <div class="attraction-card">
+            <img src="${section.image}" alt="${section.title}" class="attraction-image">
+            <div class="attraction-card-content">
+                <h3>${section.title}</h3>
+                <p>${section.description}</p>
+            </div>
+        </div>
+    `);
+    $('#attractionContainer').append(attractionCard);
+}
+
+function clearAttractions() {
+    $('#attractionContainer').empty();
+}

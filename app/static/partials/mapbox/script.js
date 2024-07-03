@@ -7,30 +7,9 @@ const map = new mapboxgl.Map({
     zoom: 7
 });
 
-const landmarks = [
-    {
-        coordinates: [121.3604, 23.0975],
-        description: 'SANXIANTAI'
-    },
-    {
-        coordinates: [121.1619, 23.2138],
-        description: 'EAST COAST NATIONAL SCENIC AREA'
-    },
-    {
-        coordinates: [121.2808, 23.0486],
-        description: 'XIAO YELIU'
-    },
-    {
-        coordinates: [121.2008, 22.7554],
-        description: 'TAITUNG SEASIDE PARK'
-    },
-    {
-        coordinates: [121.2142, 23.1156],
-        description: 'BROWN BOULEVARD'
-    }
-];
+let markers = [];
 
-landmarks.forEach(function(landmark) {
+function addLandmark(landmark) {
     const el = document.createElement('div');
     el.className = 'marker';
 
@@ -43,12 +22,12 @@ landmarks.forEach(function(landmark) {
     dot.appendChild(innerDot);
     el.appendChild(dot);
 
-    const label = document.createElement('div');
-    label.className = 'label';
-    label.textContent = landmark.description;
-    el.appendChild(label);
+    const nameLabel = document.createElement('div');
+    nameLabel.className = 'label';
+    nameLabel.textContent = landmark.name;
+    el.appendChild(nameLabel);
 
-    new mapboxgl.Marker(el)
+    const marker = new mapboxgl.Marker(el)
         .setLngLat(landmark.coordinates)
         .setPopup(new mapboxgl.Popup({ offset: 25 }).setText(landmark.description))
         .addTo(map);
@@ -60,4 +39,42 @@ landmarks.forEach(function(landmark) {
             essential: true
         });
     });
-});
+
+    markers.push(marker);
+}
+
+function clearLandmarks() {
+    markers.forEach(marker => marker.remove());
+    markers = [];
+}
+//
+// // 初始加載地標
+// const landmarks = [
+//     {
+//         coordinates: [121.3604, 23.0975],
+//         name: '測試1',
+//         description: 'SANXIANTAI'
+//     },
+//     {
+//         coordinates: [121.1619, 23.2138],
+//         name: '測試2',
+//         description: 'EAST COAST NATIONAL SCENIC AREA'
+//     },
+//     {
+//         coordinates: [121.2808, 23.0486],
+//         name: '測試3',
+//         description: 'XIAO YELIU'
+//     },
+//     {
+//         coordinates: [121.2008, 22.7554],
+//         name: '測試4',
+//         description: 'TAITUNG SEASIDE PARK'
+//     },
+//     {
+//         coordinates: [121.2142, 23.1156],
+//         name: '測試5',
+//         description: 'BROWN BOULEVARD'
+//     }
+// ];
+//
+// landmarks.forEach(addLandmark);
