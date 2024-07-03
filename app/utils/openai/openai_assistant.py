@@ -9,9 +9,10 @@ from app.utils.openai.tool_functions_map import get_function
 
 
 class OpenAIAssistant:
-    def __init__(self, assistant_id: str, thread_id: str = None):
+    def __init__(self, assistant_id: str, thread_id: str = None, callback=None):
         self.assistant_id = assistant_id
         self.thread_id = thread_id if thread_id is not None else asyncio.run(create_thread(messages=[])).id
+        self.callback = callback
 
     async def get_thread_id(self):
         return self.thread_id
@@ -81,6 +82,7 @@ class OpenAIAssistant:
             function = get_function(function_name)
             if function:
                 output = await function(**function_args)
+                print(f"Tool Output: {output}")
                 output_list.append({
                     "tool_call_id": tool_call.id,
                     "output": output

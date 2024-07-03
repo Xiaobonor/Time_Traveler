@@ -52,9 +52,9 @@ The output structure must be a valid JSON object with a structure like:
 
 
 class TravelPlanExpert(OpenAIAssistant):
-    def __init__(self, thread_id=None):
+    def __init__(self, thread_id=None, callback=None):
         assistant_id = os.getenv("TPE_ASSISTANT_ID")
-        super().__init__(assistant_id, thread_id)
+        super().__init__(assistant_id, thread_id, callback)
 
     async def start_travel_plan(self, user_input: str):
         print("Starting travel plan...")

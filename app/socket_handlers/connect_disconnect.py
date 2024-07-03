@@ -9,4 +9,4 @@ def handle_connect():
     user_id = session.get('user_info')['google_id']
     if user_id:
         join_room(user_id)
-        emit('status_update', {'message': '🌐 伺服器連線成功'}, room=user_id)
+        emit('status_update', {'message': '🌐 伺服器連線成功', 'role': 'system'}, room=user_id)

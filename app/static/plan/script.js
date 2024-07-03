@@ -137,6 +137,10 @@ async function submitAnswers() {
 }
 
 function appendMessage(message, sender) {
+    if (sender !== 'system' && sender !== 'user') {
+        appendStatusMessage(message);
+        return;
+    }
     const messageDiv = $('<div>').addClass(sender).text(message);
     $('#chatBox').append(messageDiv).scrollTop($('#chatBox')[0].scrollHeight);
 }
@@ -206,7 +210,7 @@ function turnstileCallback(token) {
         });
 
         socket.on('status_update', (data) => {
-            appendMessage(data.message, 'system');
+            appendMessage(data.message, data.role);
         });
 
         socket.on('message', (data) => {
@@ -222,6 +226,21 @@ function refreshTurnstile() {
         callback: turnstileCallback,
         action: 'travel_plan'
     });
+}
+
+function appendStatusMessage(message) {
+    const lastMessage = $('#chatBox > div').last();
+    if (lastMessage.hasClass('status')) {
+        lastMessage.text(message);
+    } else {
+        const statusDiv = $('<div>').addClass('status').css({
+            'background-color': '#fbf3dc',
+            'padding': '10px',
+            'border-radius': '5px',
+            'margin': '5px 0'
+        }).text(message);
+        $('#chatBox').append(statusDiv).scrollTop($('#chatBox')[0].scrollHeight);
+    }
 }
 
 // Container icon buttons
@@ -264,16 +283,6 @@ $(document).ready(function() {
     //         title: '景點1',
     //         description: '這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。',
     //         image: 'https://www.taiwan.net.tw/pic.ashx?qp=1/big_scenic_spots/pic_74_4.jpg&sizetype=3'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image1.jpg'
     //     },
     //     {
     //         title: '景點2',

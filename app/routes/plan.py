@@ -9,6 +9,7 @@ from app.utils.agents.assistant.travel_plan import TravelPlanExpert
 from app.utils.agents.travel_needs_reviewer import travel_needs_check
 from app.utils.auth_utils import login_required
 from app.utils.turnstile import turnstile_required
+from app.utils.callback import status_callback
 
 plan_bp = Blueprint('plan', __name__)
 
@@ -26,15 +27,16 @@ def submit_request():
     data = request.json
     user_input = data['request']
     try:
-        print(f"User input: {user_input}")
-        agent = TravelDemandAnalysisExpert()
+        user_id = session['user_info']['google_id']
+        agent = TravelDemandAnalysisExpert(callback=status_callback)
+        status_callback("創建需求分析專家中...", "status", user_id)
         session['agent'] = pickle.dumps(agent)
         session['answers'] = {}
-        print("Created agent")
+        status_callback("需求分析專家已創建", "status", user_id)
         thread_id = asyncio.run(agent.get_thread_id())
-        print(f"Thread ID: {thread_id}")
+        status_callback("正在處理需求...", "status", user_id)
         response = asyncio.run(agent.submit_analysis_request(user_input))
-        print(f"Response: {response}")
+        status_callback("需求分析已完成", "status", user_id)
         return jsonify({'success': True, 'questions': response, 'thread_id': thread_id})
     except Exception as e:
         print(f"Error: {e}")
