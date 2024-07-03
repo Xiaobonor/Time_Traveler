@@ -55,6 +55,9 @@ services:
       SESSION_TIMEOUT: 604800
       HOST_DOMAIN: ""
       USE_AZURE_OPENAI: "False"
+      MODEL_SMART_NAME: "gpt4o"
+      MODEL_FAST_NAME: "gpt4o"
+      MODEL_CHAT_DEFAULT: "gpt4o"
       AZURE_OPENAI_ENDPOINT: ""
       AZURE_OPENAI_API_KEY: ""
       AZURE_OPENAI_API_VERSION: ""
@@ -67,6 +70,8 @@ services:
       TURNSTILE_SECRET_KEY: ""
       MONGO_URI: ""
       REDIS_URI: ""
+      TDAE_ASSISTANT_ID: ""
+      TPE_ASSISTANT_ID: ""
     expose:
       - "80"
     networks:
@@ -93,6 +98,9 @@ HOST_DOMAIN=""
 # -- Settings --
 # If True, the app will use Azure OpenAI API, otherwise it will use OpenAI API.
 USE_AZURE_OPENAI=False
+MODEL_SMART_NAME="gpt4o"
+MODEL_FAST_NAME="gpt4o"
+MODEL_CHAT_DEFAULT="gpt4o"
 
 # -- AZURE --
 AZURE_OPENAI_ENDPOINT=""
@@ -113,7 +121,8 @@ MONGO_URI=""
 REDIS_URI=""
 
 # -- Assistant --
-TADE_ID=""
+TDAE_ASSISTANT_ID=""
+TPE_ASSISTANT_ID=""
 ```
 
 #### 3️⃣ Run the app

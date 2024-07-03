@@ -21,13 +21,10 @@ class OpenAIAssistant:
         return await delete_thread(self.thread_id)
 
     async def send_request(self, message_content: str):
-        print("Sending request to assistant...")
         await self._send_message(message_content)
-        print("Initiating run...")
+        self.callback("正在等待助手回應...", "status")
         run = await self._initiate_run()
-        print("Waiting for assistant response...")
         await self._wait_for_assistant_response(run)
-        print("Retrieving latest assistant response...")
         return await self._retrieve_latest_assistant_response()
 
     async def _send_message(self, message_content: str):
@@ -40,15 +37,15 @@ class OpenAIAssistant:
         while True:
             runs = await get_runs_by_thread(self.thread_id)
             running = runs.data[0]
-            print(f"Run status: {running.status}")
             if running.status == "requires_action":
-                print("Handling tool calls...")
+                self.callback("助手調用工具中...", "status")
                 tool_outputs = await self._handle_tool_calls(running.required_action.submit_tool_outputs.tool_calls)
+                self.callback("調用完成，等待助手回應...", "status")
                 await submit_tool_outputs_and_poll(self.thread_id, running.id, tool_outputs)
                 await self._poll_until_complete(running.id)
                 break
             elif running.status in ["completed", "failed"]:
-                print("Run completed or failed.")
+                self.callback("已完成任務", "status")
                 break
             await asyncio.sleep(2)
 
@@ -56,15 +53,15 @@ class OpenAIAssistant:
         while True:
             runs = await get_runs_by_thread(self.thread_id)
             running = runs.data[0]
-            print(f"(Pool) Run status: {running.status}")
             if running.status in ["requires_action"]:
-                print("Handling tool calls...")
+                self.callback("助手調用工具中...", "status")
                 tool_outputs = await self._handle_tool_calls(running.required_action.submit_tool_outputs.tool_calls)
+                self.callback("調用完成，等待助手回應...", "status")
                 await submit_tool_outputs_and_poll(self.thread_id, running.id, tool_outputs)
                 await self._poll_until_complete(running.id)
                 break
             elif running.status in ["completed", "failed"]:
-                print("Run completed.")
+                self.callback("已完成任務", "status")
                 break
             await asyncio.sleep(2)
 
@@ -73,8 +70,6 @@ class OpenAIAssistant:
         for tool_call in tool_calls:
             function_name = tool_call.function.name
             function_args = tool_call.function.arguments
-            print(f"Function name: {function_name}")
-            print(f"Function arguments: {function_args}")
 
             if isinstance(function_args, str):
                 function_args = eval(function_args.replace("true", "True").replace("false", "False"))
@@ -82,7 +77,6 @@ class OpenAIAssistant:
             function = get_function(function_name)
             if function:
                 output = await function(**function_args)
-                print(f"Tool Output: {output}")
                 output_list.append({
                     "tool_call_id": tool_call.id,
                     "output": output

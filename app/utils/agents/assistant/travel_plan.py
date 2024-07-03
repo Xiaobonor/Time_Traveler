@@ -57,5 +57,4 @@ class TravelPlanExpert(OpenAIAssistant):
         super().__init__(assistant_id, thread_id, callback)
 
     async def start_travel_plan(self, user_input: str):
-        print("Starting travel plan...")
         return await self.send_request(user_input)

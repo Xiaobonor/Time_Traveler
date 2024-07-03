@@ -35,7 +35,6 @@ The output structure must be a valid JSON object with a structure like:
 
 
 async def travel_needs_check(json_data):
-    print("Checking travel needs...")
     if "cf-turnstile-response" in json_data:
         del json_data["cf-turnstile-response"]
 
@@ -44,15 +43,10 @@ async def travel_needs_check(json_data):
     response = json_repair.repair_json(response)
     response_dict = json_repair.loads(response)
 
-    print("The response from openai is: ", response_dict)
-    print("The token usage is: ", usage)
-
     if not response_dict['success']:
-        print("The response is not successful, returning...")
         response_dict[
             'comment'] = ("你的所列出的問題太少了，這是審評意見，請再增加更多問題，同時也請確保你的輸出內容應該只有json格式，不要有空格或換行。\
             同時請你僅列出新追問的問題和選項即可，不必列出剛剛已經有的選項。 Output structure must be a valid JSON object and " +
             "without space or newline.。") + response_dict['comment']
 
-    print("Returning response...")
     return response_dict, usage

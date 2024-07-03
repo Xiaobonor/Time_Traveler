@@ -299,3 +299,46 @@ h1 {
     background-color: #e9e9e9;
     transform: scale(1.05);
 }
+
+/* Status */
+.status {
+    position: relative;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fbf3dc;
+}
+
+.expand-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+.expand-button:hover {
+    background-color: #0056b3;
+}
+
+.status-history {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.status-history-item {
+    margin-bottom: 5px;
+}
+
+.status-time {
+    font-weight: bold;
+    color: #333;
+}
+
+.status-update {
+    color: #666;
+}
