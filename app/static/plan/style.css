@@ -324,21 +324,38 @@ h1 {
     background-color: #0056b3;
 }
 
+/* Status */
 .status-history {
-    margin-top: 10px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    max-height: 100px;
+    overflow-y: auto;
+    animation: fadeIn 0.5s;
 }
 
-.status-history-item {
-    margin-bottom: 5px;
-}
-
-.status-time {
-    font-weight: bold;
-    color: #333;
-}
-
-.status-update {
+.status-history p {
+    margin: 0;
+    font-size: 0.85em;
     color: #666;
+}
+
+.toggle-history {
+    color: #0056b3;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+    display: inline;
+}
+
+.toggle-history:hover {
+    transform: scale(1.1);
+}
+
+.toggle-history.active {
+    color: #007BFF;
+}
+
+.status {
+    position: relative;
 }

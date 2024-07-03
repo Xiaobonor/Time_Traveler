@@ -5,6 +5,7 @@ let answers = {};
 let currentQuestion = null;
 let turnstileToken = '';
 let socket = null;
+let statusHistory = [];
 
 $('#sendButton').click(async function() {
     await handleUserInput();
@@ -119,6 +120,15 @@ async function submitAnswers() {
                             addAttraction(section);
                         });
                         displayFinalPlan(response.sections);
+
+                        $('#mapContainer').addClass('active');
+                        $('.container').addClass('map-active');
+                        $('#toggleMap').addClass('icon-toggle active');
+                        $('#attractionContainer').addClass('attractions-active');
+                        $('.container').addClass('attractions-active');
+                        $('#chatContainer').addClass('shrink');
+                        $('#toggleAttractions').addClass('icon-toggle active');
+
                     } else {
                         showError({ title: '錯誤', message: '沒有找到旅行計劃的相關信息' });
                     }
@@ -229,17 +239,30 @@ function refreshTurnstile() {
 }
 
 function appendStatusMessage(message) {
+    const timestamp = new Date().toLocaleTimeString();
+    statusHistory.push({ timestamp, message });
+
     const lastMessage = $('#chatBox > div').last();
     if (lastMessage.hasClass('status')) {
-        lastMessage.text(message);
+        lastMessage.find('.status-text').text(message);
+        lastMessage.find('.status-history').append(`<p>${timestamp} : ${message}</p>`);
     } else {
-        const statusDiv = $('<div>').addClass('status').css({
-            'background-color': '#fbf3dc',
-            'padding': '10px',
-            'border-radius': '5px',
-            'margin': '5px 0'
-        }).text(message);
+        const statusDiv = $(`
+            <div class="status" style="background-color: #fbf3dc; padding: 10px; border-radius: 5px; margin: 5px 0; position: relative;">
+                <div class="status-text" style="display: inline;">${message}</div>
+                <i class="fas fa-history toggle-history" style="cursor: pointer;"></i>
+                <div class="status-history" style="display: none; margin-top: 5px;">
+                    <p>${timestamp} : ${message}</p>
+                </div>
+            </div>
+        `);
         $('#chatBox').append(statusDiv).scrollTop($('#chatBox')[0].scrollHeight);
+
+        statusDiv.find('.toggle-history').click(function() {
+            const historyDiv = $(this).next('.status-history');
+            historyDiv.slideToggle();
+            $(this).toggleClass('active');
+        });
     }
 }
 

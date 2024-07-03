@@ -2,9 +2,13 @@
 # If you don't have all of our assistant, you should run this script to create and get assistants.
 # TODO:
 import asyncio
+import os
+
 from app import create_app
 app = create_app()
 import app.utils.openai.assistant_manager as assistant_manager
+
+smart_model = os.getenv("MODEL_SMART_NAME", "gpt4o")
 
 # Travel demand analysis expert(TDAE)
 from app.utils.agents.assistant.travel_needs import prompt as TDAE_prompt
@@ -70,7 +74,7 @@ TDAE = asyncio.run(assistant_manager.create_assistant(
            }
        }
     ],
-    model="gpt4o"))
+    model=smart_model))
 print("Assistant TDAE created successfully!")
 print(f"Assistant ID: {TDAE.id}")
 
@@ -138,6 +142,6 @@ TPE = asyncio.run(assistant_manager.create_assistant(
            }
        }
     ],
-    model="gpt4o"))
+    model=smart_model))
 print("Assistant TPE created successfully!")
 print(f"Assistant ID: {TPE.id}")
