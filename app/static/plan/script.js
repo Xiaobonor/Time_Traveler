@@ -214,14 +214,124 @@ $(document).ready(function() {
         mapContainer.toggleClass('active');
         $('.container').toggleClass('map-active');
         $(this).toggleClass('icon-toggle active');
+
+        const attractionContainer = $('#attractionContainer');
+        if (attractionContainer.hasClass('attractions-active')) {
+            attractionContainer.removeClass('attractions-active');
+            $('#toggleAttractions').removeClass('icon-toggle active');
+            $('#chatContainer').removeClass('shrink');
+        }
     });
 
-
     $('#toggleAttractions').click(function() {
+        const attractionContainer = $('#attractionContainer');
+        attractionContainer.toggleClass('attractions-active');
+        $('.container').toggleClass('attractions-active');
+        $('#chatContainer').toggleClass('shrink');
         $(this).toggleClass('icon-toggle active');
+
+        if (attractionContainer.hasClass('attractions-active')) {
+            $('#mapContainer').addClass('active');
+            $('#toggleMap').addClass('icon-toggle active');
+            $('.container').addClass('map-active');
+        }
     });
 
     $('#toggleOverview').click(function() {
         $(this).toggleClass('icon-toggle active');
+    });
+
+    const attractions = [
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+    ];
+
+    attractions.forEach(attraction => {
+        const card = $(`
+            <div class="attraction-card">
+                <img src="${attraction.image}" alt="${attraction.title}" class="attraction-image">
+                <h3>${attraction.title}</h3>
+                <p>${attraction.description}</p>
+            </div>
+        `);
+        $('#attractionContainer').append(card);
     });
 });
