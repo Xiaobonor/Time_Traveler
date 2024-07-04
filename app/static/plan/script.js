@@ -220,6 +220,15 @@ function displayFinalPlan(sections) {
             <p>活動: ${section.activity}</p>
         `);
         $('#chatBox').append(planDiv).scrollTop($('#chatBox')[0].scrollHeight);
+
+        if (section.youtube_url && section.youtube_url.length > 0) {
+            section.youtube_url.forEach(video => {
+                const videoFrame = $(`
+                    <iframe class="detail-video" src="${video.url}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `);
+                planDiv.append(videoFrame);
+            });
+        }
     });
 }
 
@@ -405,23 +414,22 @@ $(document).ready(function() {
     ];
 
     attractions.forEach(section => {
-        const card = $(`
-        <div class="attraction-card" onclick="showAttractionDetails('${section.title}', '${section.description}', '${section.image}', '${section.location}', '${section.transportation}', '${section.accommodation}', '${section.restaurant}', '${section.activity}')">
-            <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
-            <div class="attraction-card-content">
-                <h3>${section.title}</h3>
-                <p>${section.description}</p>
-            </div>
-        </div>
-        `);
-        $('#attractionContainer').append(card);
+        addAttraction(section);
     });
 });
 
-//             <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
 function addAttraction(section) {
     const attractionCard = $(`
-        <div class="attraction-card" onclick="showAttractionDetails('${section.title}', '${section.description}', '${section.image}','${section.transportation}', '${section.accommodation}', '${section.restaurant}', '${section.activity}')">
+        <div class="attraction-card" onclick="showAttractionDetails(
+            '${section.title}', 
+            '${section.description}', 
+            '${section.image}',
+            '${section.location}',
+            '${section.transportation}',
+            '${section.accommodation}',
+            '${section.restaurant}',
+            '${section.activity}',
+            ${JSON.stringify(section.youtube_url)})">
             <div class="attraction-card-content">
                 <h3>${section.title}</h3>
                 <p>${section.description}</p>
@@ -435,7 +443,7 @@ function clearAttractions() {
     $('#attractionContainer').empty();
 }
 
-function showAttractionDetails(title, description, image, location, transportation, accommodation, restaurant, activity) {
+function showAttractionDetails(title, description, image, location, transportation, accommodation, restaurant, activity, youtubeUrls) {
     $('#detailTitle').text(title);
     $('#detailImage').attr('src', image);
     $('#detailDescription').text(description);
@@ -445,5 +453,19 @@ function showAttractionDetails(title, description, image, location, transportati
     $('#detailRestaurant').html(`餐廳: ${restaurant}`);
     $('#detailActivity').html(`活動: ${activity}`);
 
+    $('#detailVideos').empty();
+
+    if (youtubeUrls && youtubeUrls.length > 0) {
+        youtubeUrls.forEach(video => {
+            const videoFrame = $(`
+                <iframe class="detail-video" src="${video.url}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            `);
+            $('#detailVideos').append(videoFrame);
+        });
+    } else {
+        $('#detailVideos').append('<p>沒有可用的影片</p>');
+    }
+
     $('#detailContainer').removeClass('hidden').addClass('visible');
 }
+

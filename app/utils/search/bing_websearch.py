@@ -28,14 +28,14 @@ async def web_search_bing(query: str, count=10, offset=0, web_page=True, image=F
     headers = {'Ocp-Apim-Subscription-Key': subscription_key}
 
     response_filter = []
-    if web_page:
-        response_filter.append("webPages")
     if image:
         response_filter.append("images")
-    if news:
+    elif news:
         response_filter.append("news")
-    if video:
+    elif video:
         response_filter.append("videos")
+    elif web_page:
+        response_filter.append("webPages")
 
     params = {
         'q': query,
@@ -62,5 +62,5 @@ async def web_search_bing(query: str, count=10, offset=0, web_page=True, image=F
 
         return json_repair.repair_json(str(search_results))
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"Bing Search: An error occurred: {e}")
         return None

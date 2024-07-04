@@ -40,6 +40,7 @@ class OpenAIAssistant:
             if running.status == "requires_action":
                 self.callback("助手調用工具中...", "status")
                 tool_outputs = await self._handle_tool_calls(running.required_action.submit_tool_outputs.tool_calls)
+                print(tool_outputs)
                 self.callback("調用完成，等待助手回應...", "status")
                 await submit_tool_outputs_and_poll(self.thread_id, running.id, tool_outputs)
                 await self._poll_until_complete(running.id)
@@ -70,6 +71,8 @@ class OpenAIAssistant:
         for tool_call in tool_calls:
             function_name = tool_call.function.name
             function_args = tool_call.function.arguments
+            print(function_name)
+            print(function_args)
 
             if isinstance(function_args, str):
                 function_args = eval(function_args.replace("true", "True").replace("false", "False"))
