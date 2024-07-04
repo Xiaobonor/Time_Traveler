@@ -261,7 +261,7 @@ h1 {
 }
 
 .attraction-card img {
-    width: 100%;
+    width: 40%;
     height: auto;
     margin-right: 10px;
     border-radius: 10px;
@@ -273,6 +273,7 @@ h1 {
 
 .attraction-card-content {
     display: flex;
+    width: 250px;
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
@@ -389,38 +390,72 @@ h1 {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
+    max-width: 80%;
+    max-height: 80%;
     padding: 20px;
-    text-align: center;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
     animation: slideInFromTop 0.5s ease;
+    overflow-y: auto;
 }
 
-.detail-content h2 {
-    margin-top: 0;
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.detail-text {
+    flex: 1;
+}
+
+.detail-image-container {
+    flex: 0 0 30%;
+    display: flex;
+    justify-content: center;
+    margin-left: 20px;
 }
 
 .detail-image {
     width: 100%;
     height: auto;
-    margin: 20px 0;
     border-radius: 10px;
 }
 
-.detail-content p {
-    color: #333;
+.detail-video-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-.close-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 1.5em;
+.detail-video {
+    flex: 1;
+    height: 200px;
+    border-radius: 10px;
+}
+
+.detail-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.action-button {
+    flex: 1;
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: background-color 0.3s;
+    text-align: center;
 }
 
-.close-button:hover {
-    color: #007BFF;
+.action-button:hover {
+    background-color: #0056b3;
 }
 
 @keyframes slideInFromTop {

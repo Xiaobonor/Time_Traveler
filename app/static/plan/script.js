@@ -36,7 +36,7 @@ async function handleUserInput() {
     disableInput();
 
     if (socket) {
-        socket.emit('message', { message: userInput });
+        socket.emit('message', {message: userInput});
     }
 
     if (newTrip) {
@@ -75,13 +75,13 @@ async function sendRequest(userInput) {
                 questions = JSON.parse(data.questions).questions;
                 displayNextQuestion();
             } else {
-                showError({ title: '錯誤', message: '無法處理您的請求' });
+                showError({title: '錯誤', message: '無法處理您的請求'});
             }
             refreshTurnstile();
         },
-        error: function() {
+        error: function () {
             enableInput();
-            showError({ title: '錯誤', message: '無法處理您的請求' });
+            showError({title: '錯誤', message: '無法處理您的請求'});
             refreshTurnstile();
         }
     });
@@ -89,7 +89,7 @@ async function sendRequest(userInput) {
 
 async function submitAnswers() {
     if (!turnstileToken) {
-        showError({ title: '驗證失敗', message: '驗證金鑰無效，請稍後再試' });
+        showError({title: '驗證失敗', message: '驗證金鑰無效，請稍後再試'});
         return;
     }
 
@@ -135,17 +135,17 @@ async function submitAnswers() {
                         }, 750);
 
                     } else {
-                        showError({ title: '錯誤', message: '沒有找到旅行計劃的相關信息' });
+                        showError({title: '錯誤', message: '沒有找到旅行計劃的相關信息'});
                     }
                 }
             } else {
-                showError({ title: '錯誤', message: data.error || '無法提交您的回答' });
+                showError({title: '錯誤', message: data.error || '無法提交您的回答'});
             }
             refreshTurnstile();
         },
         error: function() {
             enableInput();
-            showError({ title: '錯誤', message: '無法提交您的回答' });
+            showError({title: '錯誤', message: '無法提交您的回答'});
             refreshTurnstile();
         }
     });
@@ -204,7 +204,7 @@ function displayNextQuestion() {
 }
 
 function disablePreviousOptions() {
-    $('.option-card').css({ 'pointer-events': 'none', 'opacity': '0.5' });
+    $('.option-card').css({'pointer-events': 'none', 'opacity': '0.5'});
 }
 
 function displayFinalPlan(sections) {
@@ -261,7 +261,7 @@ function refreshTurnstile() {
 
 function appendStatusMessage(message) {
     const timestamp = new Date().toLocaleTimeString();
-    statusHistory.push({ timestamp, message });
+    statusHistory.push({timestamp, message});
 
     const lastMessage = $('#chatBox > div').last();
     if (lastMessage.hasClass('status')) {
@@ -279,7 +279,7 @@ function appendStatusMessage(message) {
         `);
         $('#chatBox').append(statusDiv).scrollTop($('#chatBox')[0].scrollHeight);
 
-        statusDiv.find('.toggle-history').click(function() {
+        statusDiv.find('.toggle-history').click(function () {
             const historyDiv = $(this).next('.status-history');
             historyDiv.slideToggle();
             $(this).toggleClass('active');
@@ -326,10 +326,18 @@ $(document).ready(function() {
         const title = $(this).find('h3').text();
         const image = $(this).find('img').attr('src');
         const description = $(this).find('p').text();
+        const location = '這裡是景點的位置';
+        const transport = '這裡是景點的交通方式';
+        const activities = '這裡是景點的活動';
+        const time = '這裡是景點的時間';
 
         $('#detailTitle').text(title);
         $('#detailImage').attr('src', image);
         $('#detailDescription').text(description);
+        $('#detailLocation').text(location);
+        $('#detailTransport').text(transport);
+        $('#detailActivities').text(activities);
+        $('#detailTime').text(time);
 
         $('#detailContainer').removeClass('hidden').addClass('visible');
     });
@@ -338,98 +346,97 @@ $(document).ready(function() {
         $('#detailContainer').removeClass('visible').addClass('hidden');
     });
 
-    //
-    // const attractions = [
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。',
-    //         image: 'https://www.taiwan.net.tw/pic.ashx?qp=1/big_scenic_spots/pic_74_4.jpg&sizetype=3'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image1.jpg'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image1.jpg'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image1.jpg'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image1.jpg'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image1.jpg'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    //     {
-    //         title: '景點1',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image1.jpg'
-    //     },
-    //     {
-    //         title: '景點2',
-    //         description: '這是一個很棒的景點，非常值得一遊。',
-    //         image: 'path/to/image2.jpg'
-    //     },
-    // ];
-    //
-    // attractions.forEach(section => {
-    //     const card = $(`
-    //     <div class="attraction-card">
-    //         <img src="${section.image}" alt="${section.title}" class="attraction-image">
-    //         <div class="attraction-card-content">
-    //             <h3>${section.title}</h3>
-    //             <p>${section.description}</p>
-    //         </div>
-    //     </div>
-    //     `);
-    //     $('#attractionContainer').append(card);
-    // });
+    const attractions = [
+        {
+            title: '景點000景點00011',
+            description: '這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。',
+            image: 'https://www.taiwan.net.tw/pic.ashx?qp=1/big_scenic_spots/pic_74_4.jpg&sizetype=3'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+        {
+            title: '景點1',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image1.jpg'
+        },
+        {
+            title: '景點2',
+            description: '這是一個很棒的景點，非常值得一遊。',
+            image: 'path/to/image2.jpg'
+        },
+    ];
+
+    attractions.forEach(section => {
+        const card = $(`
+        <div class="attraction-card" onclick="showAttractionDetails('${section.title}', '${section.description}', '${section.image}','${section.transportation}', '${section.accommodation}', '${section.restaurant}', '${section.activity}')">
+            <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
+            <div class="attraction-card-content">
+                <h3>${section.title}</h3>
+                <p>${section.description}</p>
+            </div>
+        </div>
+        `);
+        $('#attractionContainer').append(card);
+    });
 });
 
+//             <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
 function addAttraction(section) {
     const attractionCard = $(`
         <div class="attraction-card" onclick="showAttractionDetails('${section.title}', '${section.description}', '${section.image}','${section.transportation}', '${section.accommodation}', '${section.restaurant}', '${section.activity}')">
-            <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
             <div class="attraction-card-content">
                 <h3>${section.title}</h3>
                 <p>${section.description}</p>
