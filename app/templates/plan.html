@@ -13,7 +13,7 @@
     {% include 'partials/popup.html' %}
     {% include 'partials/notification.html' %}
 
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAdy_C1TwreEjazS" data-callback="turnstileCallback" data-action="travel_plan"></div>
+    <div class="cf-turnstile" data-sitekey="" data-callback="turnstileCallback" data-action="travel_plan"></div>
 
     <div id="mapContainer" class="map-container">
         {% include 'partials/mapbox.html' %}
@@ -24,7 +24,7 @@
 
     <div class="container" id="container">
 
-         <div id="detailContainer" class="detail-container hidden">
+        <div id="detailContainer" class="detail-container hidden">
             <div class="detail-content">
                 <span class="close-button" id="closeDetail">&times;</span>
                 <div class="detail-header">
@@ -33,8 +33,9 @@
                         <p id="detailDescription"></p>
                         <p id="detailLocation"></p>
                         <p id="detailTransport"></p>
-                        <p id="detailActivities"></p>
-                        <p id="detailTime"></p>
+                        <p id="detailAccommodation"></p>
+                        <p id="detailRestaurant"></p>
+                        <p id="detailActivity"></p>
                     </div>
                     <div class="detail-image-container">
                         <img id="detailImage" class="detail-image" src="" alt="景點圖片">

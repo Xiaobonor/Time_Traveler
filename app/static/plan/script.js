@@ -322,26 +322,6 @@ $(document).ready(function() {
         $(this).toggleClass('icon-toggle active');
     });
 
-    $(document).on('click', '.attraction-card', function() {
-        const title = $(this).find('h3').text();
-        const image = $(this).find('img').attr('src');
-        const description = $(this).find('p').text();
-        const location = '這裡是景點的位置';
-        const transport = '這裡是景點的交通方式';
-        const activities = '這裡是景點的活動';
-        const time = '這裡是景點的時間';
-
-        $('#detailTitle').text(title);
-        $('#detailImage').attr('src', image);
-        $('#detailDescription').text(description);
-        $('#detailLocation').text(location);
-        $('#detailTransport').text(transport);
-        $('#detailActivities').text(activities);
-        $('#detailTime').text(time);
-
-        $('#detailContainer').removeClass('hidden').addClass('visible');
-    });
-
     $('#closeDetail').click(function() {
         $('#detailContainer').removeClass('visible').addClass('hidden');
     });
@@ -349,8 +329,13 @@ $(document).ready(function() {
     const attractions = [
         {
             title: '景點000景點00011',
-            description: '這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。',
-            image: 'https://www.taiwan.net.tw/pic.ashx?qp=1/big_scenic_spots/pic_74_4.jpg&sizetype=3'
+            description: '這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。，是一個很棒的景點，很棒的景點，非常值得一遊。',
+            image: 'https://www.taiwan.net.tw/pic.ashx?qp=1/big_scenic_spots/pic_74_4.jpg&sizetype=3',
+            location: '台灣',
+            transportation: '交通方式',
+            accommodation: '住宿',
+            restaurant: '餐廳',
+            activity: '活動'
         },
         {
             title: '景點2',
@@ -421,7 +406,7 @@ $(document).ready(function() {
 
     attractions.forEach(section => {
         const card = $(`
-        <div class="attraction-card" onclick="showAttractionDetails('${section.title}', '${section.description}', '${section.image}','${section.transportation}', '${section.accommodation}', '${section.restaurant}', '${section.activity}')">
+        <div class="attraction-card" onclick="showAttractionDetails('${section.title}', '${section.description}', '${section.image}', '${section.location}', '${section.transportation}', '${section.accommodation}', '${section.restaurant}', '${section.activity}')">
             <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
             <div class="attraction-card-content">
                 <h3>${section.title}</h3>
@@ -448,4 +433,17 @@ function addAttraction(section) {
 
 function clearAttractions() {
     $('#attractionContainer').empty();
+}
+
+function showAttractionDetails(title, description, image, location, transportation, accommodation, restaurant, activity) {
+    $('#detailTitle').text(title);
+    $('#detailImage').attr('src', image);
+    $('#detailDescription').text(description);
+    $('#detailLocation').html(`位置: ${location}`);
+    $('#detailTransport').html(`交通方式: ${transportation}`);
+    $('#detailAccommodation').html(`住宿: ${accommodation}`);
+    $('#detailRestaurant').html(`餐廳: ${restaurant}`);
+    $('#detailActivity').html(`活動: ${activity}`);
+
+    $('#detailContainer').removeClass('hidden').addClass('visible');
 }

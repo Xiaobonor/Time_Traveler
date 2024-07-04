@@ -365,6 +365,54 @@ h1 {
 }
 
 /* Detail view container */
+.detail-container ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.detail-container ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.detail-container ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.detail-container ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Scrollbar for video container */
+.detail-video-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    max-height: 200px;
+}
+
+.detail-video-container ::-webkit-scrollbar {
+    height: 8px;
+}
+
+.detail-video-container ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.detail-video-container ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.detail-video-container ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Adjusted styles for detail container and content */
 .detail-container {
     position: absolute;
     top: 0;
@@ -404,10 +452,17 @@ h1 {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .detail-text {
     flex: 1;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.detail-text p {
+    margin: 5px 0;
 }
 
 .detail-image-container {
@@ -420,19 +475,6 @@ h1 {
 .detail-image {
     width: 100%;
     height: auto;
-    border-radius: 10px;
-}
-
-.detail-video-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.detail-video {
-    flex: 1;
-    height: 200px;
     border-radius: 10px;
 }
 
