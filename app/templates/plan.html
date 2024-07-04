@@ -13,7 +13,7 @@
     {% include 'partials/popup.html' %}
     {% include 'partials/notification.html' %}
 
-    <div class="cf-turnstile" data-sitekey="" data-callback="turnstileCallback" data-action="travel_plan"></div>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAdy_C1TwreEjazS" data-callback="turnstileCallback" data-action="travel_plan"></div>
 
     <div id="mapContainer" class="map-container">
         {% include 'partials/mapbox.html' %}
@@ -23,6 +23,15 @@
     </div>
 
     <div class="container" id="container">
+
+    <div id="detailContainer" class="detail-container hidden">
+        <div class="detail-content">
+            <span class="close-button" id="closeDetail">&times;</span>
+            <h2 id="detailTitle"></h2>
+            <p id="detailDescription"></p>
+        </div>
+    </div>
+
         <h1>時光旅人(開發介面)</h1>
         <div id="iconContainer">
             <i class="fas fa-map fa-lg icon" id="toggleMap" title="展開地圖"></i>

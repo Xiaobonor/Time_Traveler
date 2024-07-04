@@ -97,6 +97,7 @@ async function submitAnswers() {
     $.ajax({
         url: '/submit_answers',
         method: 'POST',
+        timeout: 300000,
         contentType: 'application/json',
         data: JSON.stringify({
             answers: answers,
@@ -131,7 +132,7 @@ async function submitAnswers() {
 
                         setTimeout(() => {
                             adjustMapView(response.sections);
-                        }, 1250);
+                        }, 750);
 
                     } else {
                         showError({ title: '錯誤', message: '沒有找到旅行計劃的相關信息' });
@@ -320,6 +321,23 @@ $(document).ready(function() {
     $('#toggleOverview').click(function() {
         $(this).toggleClass('icon-toggle active');
     });
+
+    $(document).on('click', '.attraction-card', function() {
+        const title = $(this).find('h3').text();
+        const image = $(this).find('img').attr('src');
+        const description = $(this).find('p').text();
+
+        $('#detailTitle').text(title);
+        $('#detailImage').attr('src', image);
+        $('#detailDescription').text(description);
+
+        $('#detailContainer').removeClass('hidden').addClass('visible');
+    });
+
+    $('#closeDetail').click(function() {
+        $('#detailContainer').removeClass('visible').addClass('hidden');
+    });
+
     //
     // const attractions = [
     //     {
@@ -410,7 +428,7 @@ $(document).ready(function() {
 
 function addAttraction(section) {
     const attractionCard = $(`
-        <div class="attraction-card">
+        <div class="attraction-card" onclick="showAttractionDetails('${section.title}', '${section.description}', '${section.image}','${section.transportation}', '${section.accommodation}', '${section.restaurant}', '${section.activity}')">
             <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
             <div class="attraction-card-content">
                 <h3>${section.title}</h3>
