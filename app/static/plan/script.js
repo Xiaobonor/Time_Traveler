@@ -129,6 +129,10 @@ async function submitAnswers() {
                         $('#chatContainer').addClass('shrink');
                         $('#toggleAttractions').addClass('icon-toggle active');
 
+                        setTimeout(() => {
+                            adjustMapView(response.sections);
+                        }, 1250);
+
                     } else {
                         showError({ title: '錯誤', message: '沒有找到旅行計劃的相關信息' });
                     }
@@ -144,6 +148,22 @@ async function submitAnswers() {
             refreshTurnstile();
         }
     });
+}
+
+function adjustMapView(sections) {
+    const bounds = new mapboxgl.LngLatBounds();
+
+    sections.forEach(section => {
+        if (section.landmarks && section.landmarks.coordinates) {
+            bounds.extend(section.landmarks.coordinates);
+        }
+    });
+
+    if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, {
+            padding: 200
+        });
+    }
 }
 
 function appendMessage(message, sender) {
@@ -391,7 +411,7 @@ $(document).ready(function() {
 function addAttraction(section) {
     const attractionCard = $(`
         <div class="attraction-card">
-            <img src="${section.image}" alt="${section.title}" class="attraction-image">
+            <img src="${section.image}" alt="${section.title}" class="attraction-image" onerror="this.classList.add('hidden')">
             <div class="attraction-card-content">
                 <h3>${section.title}</h3>
                 <p>${section.description}</p>

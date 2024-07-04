@@ -261,10 +261,14 @@ h1 {
 }
 
 .attraction-card img {
-    max-height: 80%;
-    max-width: 120px;
+    width: 100%;
+    height: auto;
     margin-right: 10px;
     border-radius: 10px;
+}
+
+.attraction-card img.hidden {
+    display: none;
 }
 
 .attraction-card-content {
@@ -275,21 +279,20 @@ h1 {
     white-space: normal;
 }
 
-.attraction-card h3 {
-    font-size: 1.2em;
+.attraction-card-content h3 {
+    font-size: 1.1em;
     margin: 0 0 5px;
-    margin-right: 200px;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.attraction-card p {
+.attraction-card-content p {
     font-size: 0.9em;
     color: #666;
     margin: 0;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 6;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
