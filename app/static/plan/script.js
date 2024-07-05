@@ -212,23 +212,15 @@ function displayFinalPlan(sections) {
         const planDiv = $('<div>').addClass('system').html(`
             <h2>${section.title}</h2>
             <p>${section.description}</p>
-            <img src="${section.image}" alt="${section.title}" class="plan-image">
+            <img src="${section.image}" alt="${section.title}" class="plan-image" onerror="$(this).addClass('hidden')">
             <p>位置: ${section.location}</p>
             <p>交通方式: ${section.transportation}</p>
             <p>住宿: ${section.accommodation}</p>
             <p>餐廳: ${section.restaurant}</p>
             <p>活動: ${section.activity}</p>
+            <p>時間: ${section.time}</p>
         `);
         $('#chatBox').append(planDiv).scrollTop($('#chatBox')[0].scrollHeight);
-
-        if (section.youtube_url && section.youtube_url.length > 0) {
-            section.youtube_url.forEach(video => {
-                const videoFrame = $(`
-                    <iframe class="detail-video" src="${video.url}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                `);
-                planDiv.append(videoFrame);
-            });
-        }
     });
 }
 
@@ -297,7 +289,6 @@ function appendStatusMessage(message) {
 }
 
 // Container icon buttons
-
 $(document).ready(function() {
     $('#toggleMap').click(function() {
         const mapContainer = $('#mapContainer');
@@ -334,89 +325,38 @@ $(document).ready(function() {
     $('#closeDetail').click(function() {
         $('#detailContainer').removeClass('visible').addClass('hidden');
     });
-
-    const attractions = [
-        {
-            title: '景點000景點00011',
-            description: '這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。這是一個是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，是一個很棒的景點，很棒的景點，非常值得一遊。，是一個很棒的景點，很棒的景點，非常值得一遊。',
-            image: 'https://www.taiwan.net.tw/pic.ashx?qp=1/big_scenic_spots/pic_74_4.jpg&sizetype=3',
-            location: '台灣',
-            transportation: '交通方式',
-            accommodation: '住宿',
-            restaurant: '餐廳',
-            activity: '活動'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-        {
-            title: '景點1',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image1.jpg'
-        },
-        {
-            title: '景點2',
-            description: '這是一個很棒的景點，非常值得一遊。',
-            image: 'path/to/image2.jpg'
-        },
-    ];
-
-    attractions.forEach(section => {
-        addAttraction(section);
-    });
 });
+
+function showAttractionDetails(title, description, image, location, transportation, accommodation, restaurant, activity, youtubeUrls) {
+    $('#detailTitle').text(title);
+    $('#detailImage').attr('src', image).on('error', function() {
+        $(this).addClass('hidden');
+        $('#detailImageContainer').addClass('hidden');
+        $('#detailText').removeClass('with-image');
+    }).removeClass('hidden');
+    $('#detailDescription').text(description);
+    $('#detailLocation').html(`位置: ${location}`);
+    $('#detailTransport').html(`交通方式: ${transportation}`);
+    $('#detailAccommodation').html(`住宿: ${accommodation}`);
+    $('#detailRestaurant').html(`餐廳: ${restaurant}`);
+    $('#detailActivity').html(`活動: ${activity}`);
+
+    $('#detailVideos').empty();
+
+    if (Array.isArray(youtubeUrls) && youtubeUrls.length > 0) {
+        youtubeUrls.forEach(video => {
+            const videoId = extractYouTubeVideoId(video.url);
+            const videoFrame = $(`
+                <iframe class="detail-video" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            `);
+            $('#detailVideos').append(videoFrame);
+        });
+    } else {
+        $('#detailVideos').append('<p>沒有可用的影片</p>');
+    }
+
+    $('#detailContainer').removeClass('hidden').addClass('visible');
+}
 
 function addAttraction(section) {
     const attractionCard = $(`
@@ -442,33 +382,6 @@ function addAttraction(section) {
 
 function clearAttractions() {
     $('#attractionContainer').empty();
-}
-
-function showAttractionDetails(title, description, image, location, transportation, accommodation, restaurant, activity, youtubeUrls) {
-    $('#detailTitle').text(title);
-    $('#detailImage').attr('src', image);
-    $('#detailDescription').text(description);
-    $('#detailLocation').html(`位置: ${location}`);
-    $('#detailTransport').html(`交通方式: ${transportation}`);
-    $('#detailAccommodation').html(`住宿: ${accommodation}`);
-    $('#detailRestaurant').html(`餐廳: ${restaurant}`);
-    $('#detailActivity').html(`活動: ${activity}`);
-
-    $('#detailVideos').empty();
-
-    if (Array.isArray(youtubeUrls) && youtubeUrls.length > 0) {
-        youtubeUrls.forEach(video => {
-            const videoId = extractYouTubeVideoId(video.url);
-            const videoFrame = $(`
-                <iframe class="detail-video" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            `);
-            $('#detailVideos').append(videoFrame);
-        });
-    } else {
-        $('#detailVideos').append('<p>沒有可用的影片</p>');
-    }
-
-    $('#detailContainer').removeClass('hidden').addClass('visible');
 }
 
 function extractYouTubeVideoId(url) {

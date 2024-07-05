@@ -26,9 +26,8 @@
 
         <div id="detailContainer" class="detail-container hidden">
             <div class="detail-content">
-                <span class="close-button" id="closeDetail">&times;</span>
                 <div class="detail-header">
-                    <div class="detail-text">
+                    <div id="detailText" class="detail-text with-image">
                         <h2 id="detailTitle"></h2>
                         <p id="detailDescription"></p>
                         <p id="detailLocation"></p>
@@ -37,15 +36,13 @@
                         <p id="detailRestaurant"></p>
                         <p id="detailActivity"></p>
                     </div>
-                    <div class="detail-image-container">
-                        <img id="detailImage" class="detail-image" src="" alt="景點圖片">
+                    <div id="detailImageContainer" class="detail-image-container">
+                        <img id="detailImage" class="detail-image">
                     </div>
                 </div>
-                <div class="detail-video-container" id="detailVideos"></div>
+                <div id="detailVideos" class="detail-video-container"></div>
                 <div class="detail-buttons">
-                    <button class="action-button">比較</button>
-                    <button class="action-button">在地圖上預覽</button>
-                    <button class="action-button">加入我的最愛</button>
+                    <button id="closeDetail" class="action-button">關閉</button>
                 </div>
             </div>
         </div>

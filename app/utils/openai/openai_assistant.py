@@ -80,6 +80,8 @@ class OpenAIAssistant:
             function = get_function(function_name)
             if function:
                 output = await function(**function_args)
+                if output is None:
+                    output = "Got Error while processing this tool call."
                 output_list.append({
                     "tool_call_id": tool_call.id,
                     "output": output

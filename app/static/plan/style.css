@@ -182,6 +182,14 @@ h1 {
     to { opacity: 1; transform: scale(1); }
 }
 
+.plan-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+
 /* Map */
 
 .map-container {
@@ -513,4 +521,16 @@ h1 {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+.detail-image.hidden {
+    display: none;
+}
+
+.detail-text.with-image {
+    margin-left: 0;
+}
+
+#detailImageContainer.hidden {
+    display: none;
 }
