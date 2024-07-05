@@ -420,16 +420,17 @@ $(document).ready(function() {
 
 function addAttraction(section) {
     const attractionCard = $(`
-        <div class="attraction-card" onclick="showAttractionDetails(
-            '${section.title}', 
-            '${section.description}', 
-            '${section.image}',
-            '${section.location}',
-            '${section.transportation}',
-            '${section.accommodation}',
-            '${section.restaurant}',
-            '${section.activity}',
-            ${JSON.stringify(section.youtube_url)})">
+        <div class="attraction-card" onclick='showAttractionDetails(
+            "${section.title.replace(/'/g, "\\'")}", 
+            "${section.description.replace(/'/g, "\\'")}", 
+            "${section.image.replace(/'/g, "\\'")}",
+            "${section.location.replace(/'/g, "\\'")}",
+            "${section.transportation.replace(/'/g, "\\'")}",
+            "${section.accommodation.replace(/'/g, "\\'")}",
+            "${section.restaurant.replace(/'/g, "\\'")}",
+            "${section.activity.replace(/'/g, "\\'")}",
+            ${JSON.stringify(section.youtube_url).replace(/'/g, "\\'")}
+        )'>
             <div class="attraction-card-content">
                 <h3>${section.title}</h3>
                 <p>${section.description}</p>
@@ -455,10 +456,11 @@ function showAttractionDetails(title, description, image, location, transportati
 
     $('#detailVideos').empty();
 
-    if (youtubeUrls && youtubeUrls.length > 0) {
+    if (Array.isArray(youtubeUrls) && youtubeUrls.length > 0) {
         youtubeUrls.forEach(video => {
+            const videoId = extractYouTubeVideoId(video.url);
             const videoFrame = $(`
-                <iframe class="detail-video" src="${video.url}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe class="detail-video" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             `);
             $('#detailVideos').append(videoFrame);
         });
@@ -469,3 +471,8 @@ function showAttractionDetails(title, description, image, location, transportati
     $('#detailContainer').removeClass('hidden').addClass('visible');
 }
 
+function extractYouTubeVideoId(url) {
+    const regExp = /^.*(youtu.be\/|v\/|\/u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length == 11) ? match[2] : null;
+}
