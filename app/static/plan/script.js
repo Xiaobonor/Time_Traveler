@@ -130,7 +130,7 @@ function checkRequestStatus(requestId, isInitial) {
             if (data.completed) {
                 enableInput();
                 showNotification("🌐 請求已處理完成", 5000);
-                if (isInitial) {
+                if (isInitial || data.new_question) {
                     response = data.response;
                     console.log(response)
                     questions = JSON.parse(response).questions;
@@ -392,30 +392,22 @@ function showAttractionDetails(title, description, image, location, transportati
     $('#detailContainer').removeClass('hidden').addClass('visible');
 }
 
-function escapeHTML(str) {
-    return str.replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&#39;");
-}
-
 function addAttraction(section) {
     const attractionCard = $(`
-        <div class="attraction-card" onclick="showAttractionDetails(
-            '${escapeHTML(section.title)}',
-            '${escapeHTML(section.description)}',
-            '${escapeHTML(section.image)}',
-            '${escapeHTML(section.location)}',
-            '${escapeHTML(section.transportation)}',
-            '${escapeHTML(section.accommodation)}',
-            '${escapeHTML(section.restaurant)}',
-            '${escapeHTML(section.activity)}',
-            ${JSON.stringify(section.youtube_url).replace(/'/g, "&#39;")}
-        )">
+        <div class="attraction-card" onclick='showAttractionDetails(
+            "${section.title.replace(/'/g, "\\'")}", 
+            "${section.description.replace(/'/g, "\\'")}", 
+            "${section.image.replace(/'/g, "\\'")}",
+            "${section.location.replace(/'/g, "\\'")}",
+            "${section.transportation.replace(/'/g, "\\'")}",
+            "${section.accommodation.replace(/'/g, "\\'")}",
+            "${section.restaurant.replace(/'/g, "\\'")}",
+            "${section.activity.replace(/'/g, "\\'")}",
+            ${JSON.stringify(section.youtube_url).replace(/'/g, "\\'")}
+        )'>
             <div class="attraction-card-content">
-                <h3>${escapeHTML(section.title)}</h3>
-                <p>${escapeHTML(section.description)}</p>
+                <h3>${section.title}</h3>
+                <p>${section.description}</p>
             </div>
         </div>
     `);
