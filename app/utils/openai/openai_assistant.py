@@ -17,7 +17,7 @@ class OpenAIAssistant:
     async def get_thread_id(self):
         return self.thread_id
 
-    async def delete_current_thread(self):
+    async def delete_current_thread(self):  
         return await delete_thread(self.thread_id)
 
     async def send_request(self, message_content: str):

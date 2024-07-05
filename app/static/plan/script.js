@@ -69,23 +69,24 @@ async function sendRequest(userInput) {
             'cf-turnstile-response': turnstileToken
         }),
         success: function(data) {
-            enableInput();
             if (data.success) {
-                showNotification("🌐 請求已處理完成", 5000);
-                questions = JSON.parse(data.questions).questions;
-                displayNextQuestion();
+                const requestId = data.request_id;
+                checkRequestStatus(requestId, true);
             } else {
+                enableInput();
                 showError({title: '錯誤', message: '無法處理您的請求'});
             }
             refreshTurnstile();
         },
-        error: function () {
+        error: function (jqXHR, textStatus, errorThrown) {
             enableInput();
             showError({title: '錯誤', message: '無法處理您的請求'});
             refreshTurnstile();
+            console.error('Error: ', textStatus, errorThrown);
         }
     });
 }
+
 
 async function submitAnswers() {
     if (!turnstileToken) {
@@ -94,26 +95,52 @@ async function submitAnswers() {
     }
 
     disableInput();
+
     $.ajax({
         url: '/submit_answers',
         method: 'POST',
-        timeout: 300000,
         contentType: 'application/json',
         data: JSON.stringify({
             answers: answers,
             'cf-turnstile-response': turnstileToken
         }),
         success: function(data) {
-            enableInput();
             if (data.success) {
-                if (data.new_question) {
-                    questions = JSON.parse(data.questions).questions;
+                const requestId = data.request_id;
+                checkRequestStatus(requestId, false);
+            } else {
+                enableInput();
+                showError({title: '錯誤', message: data.error || '無法提交您的回答'});
+            }
+        },
+        error: function() {
+            enableInput();
+            showError({title: '錯誤', message: '無法提交您的回答'});
+        }
+    });
+}
+
+
+function checkRequestStatus(requestId, isInitial) {
+    $.ajax({
+        url: '/check_status',
+        method: 'GET',
+        data: { id: requestId },
+        success: function(data) {
+            if (data.completed) {
+                enableInput();
+                showNotification("🌐 請求已處理完成", 5000);
+                if (isInitial) {
+                    response = data.response;
+                    console.log(response)
+                    questions = JSON.parse(response).questions;
+                    console.log('Questions:', questions);
                     displayNextQuestion();
                 } else {
                     clearLandmarks();
                     clearAttractions();
-                    const response = JSON.parse(data.response);
-                    if (response.sections && response.sections.length > 0) {
+                    const response = data.response.response;
+                    if (response && response.sections && response.sections.length > 0) {
                         response.sections.forEach(section => {
                             if (section.landmarks) {
                                 addLandmark(section.landmarks);
@@ -139,17 +166,19 @@ async function submitAnswers() {
                     }
                 }
             } else {
-                showError({title: '錯誤', message: data.error || '無法提交您的回答'});
+                setTimeout(function() {
+                    checkRequestStatus(requestId, isInitial);
+                }, 10000);
             }
-            refreshTurnstile();
         },
-        error: function() {
+        error: function (jqXHR, textStatus, errorThrown) {
             enableInput();
-            showError({title: '錯誤', message: '無法提交您的回答'});
-            refreshTurnstile();
+            showError({title: '錯誤', message: '無法檢查請求狀態'});
+            console.error('Error: ', textStatus, errorThrown);
         }
     });
 }
+
 
 function adjustMapView(sections) {
     const bounds = new mapboxgl.LngLatBounds();
@@ -177,7 +206,11 @@ function appendMessage(message, sender) {
 }
 
 function displayNextQuestion() {
-    if (questions.length === 0) return;
+    console.log('Questions:', questions);
+    if (!questions || questions.length === 0) {
+        console.error('No more questions to display');
+        return;
+    }
 
     currentQuestion = questions.shift();
     const questionDiv = $('<div>').addClass('system').text(currentQuestion.question);
