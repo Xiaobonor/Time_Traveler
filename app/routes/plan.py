@@ -30,10 +30,12 @@ def submit_request():
     user_id = session['user_info']['google_id']
     request_id = str(uuid.uuid4())
 
+    agent = asyncio.run(TravelDemandAnalysisExpert.create(callback=status_callback))
+
     session['trip_plan'] = {
         'request_id': request_id,
         'user_input': user_input,
-        'agent': pickle.dumps(TravelDemandAnalysisExpert(callback=status_callback)),
+        'agent': pickle.dumps(agent),
         'answers': {}
     }
 
@@ -112,10 +114,9 @@ async def submit_final_plan(user_id):
         else:
             status_callback("旅行需求審核完成", "status", user_id)
             del agent
-            session.pop('trip_plan')
-            agent = TravelPlanExpert(callback=status_callback)
+            agent = await TravelPlanExpert.create(callback=status_callback)
             status_callback("正在規劃旅行計畫...", "status", user_id)
-            response = await agent.start_travel_plan(session_answers)
+            response = await agent.start_travel_plan(str(session_answers))
             del agent
             status_callback("旅行計畫完成", "status", user_id)
             session['trip_plan']['response'] = response

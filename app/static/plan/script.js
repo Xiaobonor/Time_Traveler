@@ -139,15 +139,16 @@ function checkRequestStatus(requestId, isInitial) {
                 } else {
                     clearLandmarks();
                     clearAttractions();
-                    const response = data.response.response;
-                    if (response && response.sections && response.sections.length > 0) {
-                        response.sections.forEach(section => {
+                    console.log(data.response)
+                    const sections = JSON.parse(data.response).sections;
+                    if (sections.length > 0) {
+                        sections.forEach(section => {
                             if (section.landmarks) {
                                 addLandmark(section.landmarks);
                             }
                             addAttraction(section);
                         });
-                        displayFinalPlan(response.sections);
+                        displayFinalPlan(sections);
 
                         $('#mapContainer').addClass('active');
                         $('.container').addClass('map-active');
@@ -158,7 +159,7 @@ function checkRequestStatus(requestId, isInitial) {
                         $('#toggleAttractions').addClass('icon-toggle active');
 
                         setTimeout(() => {
-                            adjustMapView(response.sections);
+                            adjustMapView(sections);
                         }, 750);
 
                     } else {
@@ -391,22 +392,30 @@ function showAttractionDetails(title, description, image, location, transportati
     $('#detailContainer').removeClass('hidden').addClass('visible');
 }
 
+function escapeHTML(str) {
+    return str.replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+              .replace(/'/g, "&#39;");
+}
+
 function addAttraction(section) {
     const attractionCard = $(`
-        <div class="attraction-card" onclick='showAttractionDetails(
-            "${section.title.replace(/'/g, "\\'")}", 
-            "${section.description.replace(/'/g, "\\'")}", 
-            "${section.image.replace(/'/g, "\\'")}",
-            "${section.location.replace(/'/g, "\\'")}",
-            "${section.transportation.replace(/'/g, "\\'")}",
-            "${section.accommodation.replace(/'/g, "\\'")}",
-            "${section.restaurant.replace(/'/g, "\\'")}",
-            "${section.activity.replace(/'/g, "\\'")}",
-            ${JSON.stringify(section.youtube_url).replace(/'/g, "\\'")}
-        )'>
+        <div class="attraction-card" onclick="showAttractionDetails(
+            '${escapeHTML(section.title)}',
+            '${escapeHTML(section.description)}',
+            '${escapeHTML(section.image)}',
+            '${escapeHTML(section.location)}',
+            '${escapeHTML(section.transportation)}',
+            '${escapeHTML(section.accommodation)}',
+            '${escapeHTML(section.restaurant)}',
+            '${escapeHTML(section.activity)}',
+            ${JSON.stringify(section.youtube_url).replace(/'/g, "&#39;")}
+        )">
             <div class="attraction-card-content">
-                <h3>${section.title}</h3>
-                <p>${section.description}</p>
+                <h3>${escapeHTML(section.title)}</h3>
+                <p>${escapeHTML(section.description)}</p>
             </div>
         </div>
     `);

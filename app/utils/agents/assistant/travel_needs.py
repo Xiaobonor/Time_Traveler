@@ -53,10 +53,15 @@ The output structure must be a valid JSON object with a structure like:
 
 
 class TravelDemandAnalysisExpert(OpenAIAssistant):
-    def __init__(self, thread_id=None, callback=None):
+    def __init__(self, callback=None):
         assistant_id = os.getenv("TDAE_ASSISTANT_ID")
-        self.callback = callback
-        super().__init__(assistant_id, thread_id, callback)
+        super().__init__(assistant_id, None, callback)
+
+    @classmethod
+    async def create(cls, callback):
+        self = cls(callback)
+        await self.initialize_thread_id()
+        return self
 
     async def submit_analysis_request(self, user_input: str):
         return await self.send_request(user_input)
