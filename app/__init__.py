@@ -76,6 +76,7 @@ def create_app():
     from app.routes.flash_messages import flash_message_bp
     from app.routes.index import index_bp
     from app.routes.plan import plan_bp
+    from app.routes.image_viewer import image_viewer_bp
 
     # Here to initialize the app
     connect(host=os.getenv('MONGO_URI'))
@@ -90,6 +91,7 @@ def create_app():
     app.register_blueprint(flash_message_bp, url_prefix='/api/v1')
     app.register_blueprint(index_bp)
     app.register_blueprint(plan_bp)
+    app.register_blueprint(image_viewer
 
     # Here to register sockets
     from app.socket_handlers.connect_disconnect import socketio as connect_disconnect_socketio

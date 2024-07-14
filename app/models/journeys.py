@@ -62,3 +62,7 @@ class Journeys(Document):
                 Role(name="visitor", permissions={}, editable=False)
             ]
         super(Journeys, self).save(*args, **kwargs)
+
+    @classmethod
+    def get_journey_by_id(cls, journey_id):
+        return cls.objects(journey_id=journey_id).first()
