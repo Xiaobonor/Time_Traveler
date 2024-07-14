@@ -12,16 +12,20 @@ from dotenv import load_dotenv
 from mongoengine import connect
 from authlib.integrations.flask_client import OAuth
 from openai import AsyncAzureOpenAI, AsyncOpenAI
+from openai_assistant import init, register_functions
 from redis import Redis
+
+from app.utils.search.bing_websearch import web_search_bing
 
 socketio = SocketIO()
 cors = CORS()
 oauth = OAuth()
 openai = None
+openai_assistant = None
 
 
 def create_app():
-    global openai
+    global openai, openai_assistant
     load_dotenv()
 
     # App configuration
@@ -50,6 +54,11 @@ def create_app():
         )
     else:
         openai = AsyncOpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+    openai_assistant = init(openai)
+    register_functions({
+        "web_search_bing": web_search_bing,
+    })
 
     # Here to load blueprint
     from app.routes.auth import auth_bp

@@ -1,7 +1,8 @@
 # app/utils/agents/travel_needs.py
 # This agent call Travel plan expert(TPE)
 import os
-from app.utils.openai.openai_assistant import OpenAIAssistant
+from openai_assistant import OpenAIAssistant
+import json_repair
 
 # TODO: agent
 # BUG: 回應太少行程
@@ -243,4 +244,4 @@ class TravelPlanExpert(OpenAIAssistant):
         return self
 
     async def start_travel_plan(self, user_input: str):
-        return await self.send_request(user_input)
+        return str(json_repair.loads(await self.send_request(user_input)))

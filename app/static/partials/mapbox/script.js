@@ -3,8 +3,8 @@ mapboxgl.accessToken = '';
 const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/xiaobocute/clxykmzy0003e01r442wq6r0o',
-    center: [120.9605, 23.6978],
-    zoom: 7
+    center: [-0.1276, 51.5074], // 倫敦的中心點
+    zoom: 12
 });
 
 let markers = [];

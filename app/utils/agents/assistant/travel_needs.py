@@ -1,7 +1,9 @@
 # app/utils/agents/travel_needs.py
 # This agent call Travel demand analysis expert(TDAE)
 import os
-from app.utils.openai.openai_assistant import OpenAIAssistant
+
+import json_repair
+from openai_assistant import OpenAIAssistant
 
 prompt = """你是一位專精於分析以及理解使用者旅行需求的專家，你必須根據使用者輸入的目的地或旅行需求來進行深入的詢問，以便獲取更貼近使用者需求的旅行描述及分析。
 在使用者輸入目的地或旅行需求描述後，你需要先進行基礎搜索，以獲取相關的旅遊資訊。基於這些資訊，你需要根據使用者需求進行深度分析，並提出一系列的問題來了解他們的具體需求。這些問題應該包括但不限於以下方面（範例，你必須根據實際需求修改和挑選、創建新問題）：
@@ -64,4 +66,4 @@ class TravelDemandAnalysisExpert(OpenAIAssistant):
         return self
 
     async def submit_analysis_request(self, user_input: str):
-        return await self.send_request(user_input)
+        return str(json_repair.loads(await self.send_request(user_input)))
