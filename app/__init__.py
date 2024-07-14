@@ -7,6 +7,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_session import Session
 from flask_socketio import SocketIO
+from flask_mailman import Mail
 
 from dotenv import load_dotenv
 from mongoengine import connect
@@ -22,14 +23,15 @@ cors = CORS()
 oauth = OAuth()
 openai = None
 openai_assistant = None
+app = Flask(__name__)
+mail = Mail()
 
 
 def create_app():
-    global openai, openai_assistant
+    global openai, openai_assistant, app
     load_dotenv()
 
     # App configuration
-    app = Flask(__name__)
     app.config['DEBUG'] = os.getenv('DEBUG') == 'True'
 
     redis_url = urlparse(os.getenv('REDIS_URI'))
@@ -44,6 +46,15 @@ def create_app():
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=int(os.getenv('SESSION_TIMEOUT', 604800)))
     app.config['SESSION_USE_SIGNER'] = True
     app.config['SESSION_KEY_PREFIX'] = 'sess:'
+
+    # Mail configuration
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 465))
+    app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'false').lower() in ['true', 'on', '1']
+    app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'true').lower() in ['true', 'on', '1']
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
     # OPENAI configuration and initialization
     if os.getenv('USE_AZURE_OPENAI') == 'True':
@@ -72,6 +83,7 @@ def create_app():
     socketio.init_app(app)
     oauth.init_app(app)
     cors.init_app(app)
+    mail.init_app(app)
 
     # Here to register blueprint
     app.register_blueprint(auth_bp, url_prefix='/auth')

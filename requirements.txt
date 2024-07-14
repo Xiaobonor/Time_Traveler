@@ -14,5 +14,6 @@ json_repair==0.25.2
 tiktoken==0.7.0
 aiohttp==3.9.5
 beautifulsoup4==4.12.3
+flask_mailman==1.1.1
 
 openai_assistant==0.1.8
