@@ -6,7 +6,7 @@ import os
 
 from app import create_app
 app = create_app()
-import app.utils.openai.assistant_manager as assistant_manager
+import openai_assistant as assistant_manager
 
 smart_model = os.getenv("MODEL_SMART_NAME", "gpt4o")
 

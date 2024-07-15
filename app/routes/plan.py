@@ -49,17 +49,18 @@ def submit_request():
     return jsonify({'success': True, 'request_id': request_id})
 
 
-@plan_bp.route('/check_status', methods=['GET'])
+@plan_bp.route('/check_status', methods=['POST'])
 @login_required
 def check_status():
-    request_id = request.args.get('id')
+    data = request.json
+    request_id = data.get('id')
     trip_plan = session.get('trip_plan', {})
 
     if trip_plan.get('request_id') != request_id:
         return jsonify({'completed': False, 'error': 'Invalid request ID'})
 
     if trip_plan.get('completed'):
-        return jsonify({'completed': True, 'response': trip_plan['response']})
+        return jsonify({'completed': True, 'response': trip_plan['response'], 'new_question': trip_plan.get('new_question', False)})
 
     return jsonify({'completed': False})
 

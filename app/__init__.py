@@ -91,7 +91,7 @@ def create_app():
     app.register_blueprint(flash_message_bp, url_prefix='/api/v1')
     app.register_blueprint(index_bp)
     app.register_blueprint(plan_bp)
-    app.register_blueprint(image_viewer
+    app.register_blueprint(image_viewer_bp)
 
     # Here to register sockets
     from app.socket_handlers.connect_disconnect import socketio as connect_disconnect_socketio

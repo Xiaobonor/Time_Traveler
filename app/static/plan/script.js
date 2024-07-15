@@ -124,23 +124,25 @@ async function submitAnswers() {
 function checkRequestStatus(requestId, isInitial) {
     $.ajax({
         url: '/check_status',
-        method: 'GET',
-        data: { id: requestId },
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: requestId }), 
         success: function(data) {
             if (data.completed) {
                 enableInput();
                 showNotification("🌐 請求已處理完成", 5000);
                 if (isInitial || data.new_question) {
                     response = data.response;
-                    console.log(response)
+                    console.log(response);
                     questions = JSON.parse(response).questions;
                     console.log('Questions:', questions);
                     displayNextQuestion();
                 } else {
                     clearLandmarks();
                     clearAttractions();
-                    console.log(data.response)
+                    console.log(data.response);
                     const sections = JSON.parse(data.response).sections;
+                    console.log(sections);
                     if (sections.length > 0) {
                         sections.forEach(section => {
                             if (section.landmarks) {

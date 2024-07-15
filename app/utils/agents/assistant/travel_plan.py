@@ -200,7 +200,7 @@ You cannot output anything other than json, just a json object.
 Output structure must be a valid JSON object and without space or newline or codeblock.
 The output structure must be a valid JSON object with a structure like:
 {
-  "success": null,  // 表示請求是否成功，布爾值（true 或 false）
+  "success": null,  // 表示請求是否成功，字串（'true' 或 'false'）
   "total_sections": null,  // 總目的地數量，整數值
   "days": null,  // 旅程天數，整數值
   "sections": [  // 目的地列表，數組，每個section都代表一個獨立的目標
@@ -244,4 +244,4 @@ class TravelPlanExpert(OpenAIAssistant):
         return self
 
     async def start_travel_plan(self, user_input: str):
-        return str(json_repair.loads(await self.send_request(user_input)))
+        return str(json_repair.repair_json(await self.send_request(user_input)))

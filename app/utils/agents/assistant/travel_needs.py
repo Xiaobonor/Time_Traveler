@@ -41,7 +41,7 @@ You cannot output anything other than json, just a json object.
 Output structure must be a valid JSON object and without space or newline or codeblock.
 The output structure must be a valid JSON object with a structure like:
 {
-  "success": null,  // 表示請求是否成功，布爾值（true 或 false）
+  "success": null,  // 表示請求是否成功，字串（'true' 或 'false'）
   "question_count": null,  // 問題總數，整數值
   "questions": [  // 問題列表，數組
     {
@@ -66,4 +66,4 @@ class TravelDemandAnalysisExpert(OpenAIAssistant):
         return self
 
     async def submit_analysis_request(self, user_input: str):
-        return str(json_repair.loads(await self.send_request(user_input)))
+        return str(json_repair.repair_json(await self.send_request(user_input)))
