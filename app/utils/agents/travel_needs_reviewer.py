@@ -16,7 +16,7 @@ prompt = """你是一位專業的旅行需求分析師，你必須根據使用�
     "範例問題1": "範例回答1",
     "範例問題2": "範例回答2",
   },
-  "cf-turnstile-response": "範例問題2"
+  "cf-turnstile-response": "忽略"
 }
 
 其中的answers將包含一個或多個問題的回答。

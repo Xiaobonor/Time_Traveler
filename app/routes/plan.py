@@ -3,15 +3,19 @@ import asyncio
 import pickle
 import time
 import uuid
+from threading import Thread
 
-from flask import Blueprint, render_template, request, jsonify, session
+from flask import Blueprint, render_template, request, jsonify, session, copy_current_request_context
 
 from app.utils.agents.assistant.travel_needs import TravelDemandAnalysisExpert
 from app.utils.agents.assistant.travel_plan import TravelPlanExpert
+from app.utils.agents.assistant.travel_items import TravelItemsAnalysisExpert
 from app.utils.agents.travel_needs_reviewer import travel_needs_check
 from app.utils.auth_utils import login_required
 from app.utils.turnstile import turnstile_required
 from app.utils.callback import status_callback
+from app.utils.mail_sender import send_email
+
 
 plan_bp = Blueprint('plan', __name__)
 
@@ -96,10 +100,12 @@ def submit_answers():
     session['trip_plan']['answers'] = session_answers
     user_id = session['user_info']['google_id']
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(submit_final_plan(user_id))
-    loop.close()
+    @copy_current_request_context
+    def run_final_plan():
+        asyncio.run(submit_final_plan(user_id))
+
+    thread = Thread(target=run_final_plan)
+    thread.start()
 
     return jsonify({'success': True, 'request_id': session['trip_plan']['request_id']})
 
@@ -127,6 +133,11 @@ async def submit_final_plan(user_id):
             status_callback("旅行計畫完成", "status", user_id)
             session['trip_plan']['response'] = response
             session['trip_plan']['new_question'] = False
+            agent = await TravelItemsAnalysisExpert.create(callback=status_callback)
+            status_callback("正在分析旅行物品...", "status", user_id)
+            response = await agent.submit_analysis_request(str(response))
+            send_email("情前物品提醒！", 'xiao.bo.nor@gmail.com', "email/travel_items.html", items=response)
+            status_callback("旅行物品分析完成", "status", user_id)
         session['trip_plan']['completed'] = True
     except Exception as e:
         print(f"Error: {e}")
