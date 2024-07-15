@@ -126,7 +126,7 @@ function checkRequestStatus(requestId, isInitial) {
         url: '/check_status',
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ id: requestId }), 
+        data: JSON.stringify({ id: requestId }),
         success: function(data) {
             if (data.completed) {
                 enableInput();
