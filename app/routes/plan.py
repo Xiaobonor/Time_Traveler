@@ -59,6 +59,7 @@ def check_status():
     data = request.json
     request_id = data.get('id')
     trip_plan = session.get('trip_plan', {})
+    print(trip_plan)
 
     if trip_plan.get('request_id') != request_id:
         return jsonify({'completed': False, 'error': 'Invalid request ID'})
@@ -101,45 +102,65 @@ def submit_answers():
     user_id = session['user_info']['google_id']
 
     @copy_current_request_context
-    def run_final_plan():
-        asyncio.run(submit_final_plan(user_id))
+    def submit_final_plan(user_id):
+        try:
+            agent = pickle.loads(session['trip_plan']['agent'])
+            status_callback("正在審核旅行需求...", "status", user_id)
+            session_answers = session['trip_plan']['answers']
+            response, usage = asyncio.run(travel_needs_check(str(session_answers)))
 
-    thread = Thread(target=run_final_plan)
+            if not response['success']:
+                status_callback("旅行需求需進一步調整...", "status", user_id)
+                response = asyncio.run(agent.submit_analysis_request(response['comment']))
+                status_callback("旅行需求調整完成", "status", user_id)
+                session['trip_plan']['response'] = response
+                session['trip_plan']['new_question'] = True
+            else:
+                status_callback("旅行需求審核完成", "status", user_id)
+                del agent
+                agent = asyncio.run(TravelPlanExpert.create(callback=status_callback))
+                status_callback("正在規劃旅行計畫...", "status", user_id)
+                response = asyncio.run(agent.start_travel_plan(str(session_answers)))
+                del agent
+                status_callback("旅行計畫完成", "status", user_id)
+                session['trip_plan']['response'] = response
+                session['trip_plan']['new_question'] = False
+                agent = asyncio.run(TravelItemsAnalysisExpert.create(callback=status_callback))
+                status_callback("正在分析旅行物品...", "status", user_id)
+                response = asyncio.run(agent.submit_analysis_request(str(response)))
+                print(response)
+                print("------------------------------")
+                items=response['items']
+                print(items)
+                send_email("情前物品提醒！", session['user_info']['email'], "email/travel_items.html", items=items)
+                status_callback("旅行物品分析完成", "status", user_id)
+                del agent
+            session['trip_plan']['completed'] = True
+            print("Trip plan completed")
+        except Exception as e:
+            print(f"Error: {e}")
+            session['trip_plan']['completed'] = True
+            session['trip_plan']['error'] = str(e)
+
+    thread = Thread(target=submit_final_plan(user_id))
     thread.start()
 
     return jsonify({'success': True, 'request_id': session['trip_plan']['request_id']})
 
 
-async def submit_final_plan(user_id):
-    try:
-        agent = pickle.loads(session['trip_plan']['agent'])
-        status_callback("正在審核旅行需求...", "status", user_id)
-        session_answers = session['trip_plan']['answers']
-        response, usage = await travel_needs_check(str(session_answers))
 
-        if not response['success']:
-            status_callback("旅行需求需進一步調整...", "status", user_id)
-            response = await agent.submit_analysis_request(response['comment'])
-            status_callback("旅行需求調整完成", "status", user_id)
-            session['trip_plan']['response'] = response
-            session['trip_plan']['new_question'] = True
-        else:
-            status_callback("旅行需求審核完成", "status", user_id)
-            del agent
-            agent = await TravelPlanExpert.create(callback=status_callback)
-            status_callback("正在規劃旅行計畫...", "status", user_id)
-            response = await agent.start_travel_plan(str(session_answers))
-            del agent
-            status_callback("旅行計畫完成", "status", user_id)
-            session['trip_plan']['response'] = response
-            session['trip_plan']['new_question'] = False
-            agent = await TravelItemsAnalysisExpert.create(callback=status_callback)
-            status_callback("正在分析旅行物品...", "status", user_id)
-            response = await agent.submit_analysis_request(str(response))
-            send_email("情前物品提醒！", 'xiao.bo.nor@gmail.com', "email/travel_items.html", items=response)
-            status_callback("旅行物品分析完成", "status", user_id)
-        session['trip_plan']['completed'] = True
-    except Exception as e:
-        print(f"Error: {e}")
-        session['trip_plan']['completed'] = True
-        session['trip_plan']['error'] = str(e)
+@plan_bp.route('/test')
+def test():
+    items = [
+        {"item_name": "保暖衣物", "type": "衣物", "description": "防寒的外套或毛衣", "reason": "山區旅程可能會較冷", "font_awsome_icon": "fa-solid fa-jacket"},
+        {"item_name": "防蚊液", "type": "衛生用品", "description": "防蚊蟲叮咬的噴霧或乳液", "reason": "山區可能有蚊蟲", "font_awsome_icon": "fa-solid fa-spray-can"},
+        {"item_name": "防曬乳", "type": "衛生用品", "description": "防止紫外線傷害皮膚的乳液", "reason": "保護皮膚免受陽光直射", "font_awsome_icon": "fa-solid fa-sun"},
+        {"item_name": "舒適步行鞋", "type": "衣物", "description": "穿著舒適的步行鞋", "reason": "行程中包含長時間步行", "font_awsome_icon": "fa-solid fa-shoe-prints"},
+        {"item_name": "水瓶", "type": "設備", "description": "可重複使用的水瓶", "reason": "保持旅行中隨時補充水分", "font_awsome_icon": "fa-solid fa-water-bottle"},
+        {"item_name": "口罩", "type": "衛生用品", "description": "一次性或可重複使用的口罩", "reason": "公共場所保護", "font_awsome_icon": "fa-solid fa-head-side-mask"},
+        {"item_name": "手消毒液", "type": "衛生用品", "description": "便攜手消毒液", "reason": "保持手部衛生", "font_awsome_icon": "fa-solid fa-pump-soap"},
+        {"item_name": "相機", "type": "設備", "description": "用於拍攝照片的相機", "reason": "旅行紀念和景點拍攝", "font_awsome_icon": "fa-solid fa-camera"},
+        {"item_name": "充電器和充電寶", "type": "電子產品", "description": "手機及相機等設備的充電器和移動電源", "reason": "保持電子設備電量充足", "font_awsome_icon": "fa-solid fa-charging-station"},
+        {"item_name": "舒適透氣的衣物", "type": "衣物", "description": "輕便且透氣的上衣和長褲", "reason": "參觀寺廟和博物館需要衣著得體，且避免過熱", "font_awsome_icon": "fa-solid fa-tshirt"}
+    ]
+    return render_template('email/travel_items.html', items=items)
