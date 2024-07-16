@@ -71,6 +71,7 @@ async function sendRequest(userInput) {
         success: function(data) {
             if (data.success) {
                 const requestId = data.request_id;
+                sessionStorage.setItem('request_id', requestId);
                 checkRequestStatus(requestId, true);
             } else {
                 enableInput();
@@ -105,20 +106,25 @@ async function submitAnswers() {
             'cf-turnstile-response': turnstileToken
         }),
         success: function(data) {
-            if (data.success) {
-                const requestId = data.request_id;
-                checkRequestStatus(requestId, false);
-            } else {
-                enableInput();
-                showError({title: '錯誤', message: data.error || '無法提交您的回答'});
-            }
+
         },
         error: function() {
             enableInput();
-            showError({title: '錯誤', message: '無法提交您的回答'});
         }
     });
+
+    const requestId = sessionStorage.getItem('request_id');
+    if (requestId) {
+        // wait for 10 seconds before checking the status
+        setTimeout(function() {
+            checkRequestStatus(requestId, false);
+        }, 10000);
+    } else {
+        showError({title: '錯誤', message: '無法獲取請求ID'});
+        enableInput();
+    }
 }
+
 
 
 function checkRequestStatus(requestId, isInitial) {
@@ -137,12 +143,14 @@ function checkRequestStatus(requestId, isInitial) {
                     questions = JSON.parse(response).questions;
                     console.log('Questions:', questions);
                     displayNextQuestion();
+                    enableInput();
                 } else {
                     clearLandmarks();
                     clearAttractions();
                     console.log(data.response);
                     const sections = JSON.parse(data.response).sections;
                     console.log(sections);
+                    enableInput();
                     if (sections.length > 0) {
                         sections.forEach(section => {
                             if (section.landmarks) {
