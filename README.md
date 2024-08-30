@@ -7,6 +7,12 @@
 This is a web application that helps users plan and manage their travel experiences seamlessly.  
 You can try it on [Time Traveler(not yet)](notyeet).
 
+### Quick Preview
+
+
+https://github.com/user-attachments/assets/f0d39db0-e53a-49f9-af9d-53d3943f0cc1
+
+
 ### 🔥 Features
 babababa (To be added)
 
